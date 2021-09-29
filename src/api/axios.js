@@ -1,7 +1,17 @@
 // import axios from "axios";
 const axios = require("axios");
+const { unset } = require("lodash");
 
 axios.defaults.baseURL = "https://connections-api.herokuapp.com";
+
+const token = {
+  set(token) {
+    axios.defaults.headers.common.Authorization = token;
+  },
+  unset() {
+    axios.defaults.headers.common.Authorization = "";
+  },
+};
 
 const signUpUser = async (credentials) => {
   const { data } = await axios.post("/users/signup", credentials);
