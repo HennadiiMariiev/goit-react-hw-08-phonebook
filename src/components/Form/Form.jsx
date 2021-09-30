@@ -12,26 +12,7 @@ import { useSelector } from 'react-redux';
 import { getItems } from 'redux/contacts-selectors';
 import { useDispatch } from 'react-redux';
 import { fetchPostSingleContact } from 'redux/items/items-operations';
-
-const useInput = (input) => {
-  const [value, setValue] = useState(() => '');
-
-  useEffect(() => {
-    function isValidInput(input) {
-      if (!input.value.match(input.pattern) && input.value.length) return false;
-
-      return true;
-    }
-
-    if (!isValidInput(input.current)) {
-      input.current.style = 'background-color: #f7d7d7;';
-    } else {
-      input.current.style = 'background-color: transparent;';
-    }
-  }, [value, input]);
-
-  return [value, setValue];
-};
+import { useInput } from 'hooks/useInput';
 
 export function Form() {
   const items = useSelector(getItems);
