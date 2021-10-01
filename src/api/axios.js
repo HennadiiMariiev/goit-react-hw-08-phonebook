@@ -15,14 +15,14 @@ const token = {
 export const registerUser = async (credentials) => {
   const { data } = await axios.post('/users/signup', credentials);
   token.set(data.token);
-  console.log(data);
   return data;
 };
 
 export const loginUser = async (credentials) => {
   const { data } = await axios.post('/users/login', credentials);
   token.set(data.token);
-  console.log(data);
+
+  localStorage.setItem('token', data.token);
   return data;
 };
 
@@ -30,7 +30,6 @@ export const logoutUser = async () => {
   try {
     const { data } = await axios.post('/users/logout');
     token.unset();
-    console.log(data);
 
     return data;
   } catch (error) {
@@ -41,7 +40,6 @@ export const logoutUser = async () => {
 export const getCurrentUser = async (credentials) => {
   try {
     const { data } = await axios.get('/users/current', credentials);
-    console.log(data);
 
     return data;
   } catch (error) {

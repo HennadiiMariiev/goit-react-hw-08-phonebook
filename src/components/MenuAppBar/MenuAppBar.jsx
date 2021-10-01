@@ -18,66 +18,83 @@ import Link from '@mui/material/Link';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import LoginIcon from '@mui/icons-material/Login';
 import ImportContactsIcon from '@mui/icons-material/ImportContacts';
-import { useSelector } from 'react-redux';
-import { getIsLoggedIn, getEmail } from 'redux/auth/auth-selectors';
+import { useSelector, useDispatch } from 'react-redux';
+import { getIsLoggedIn, getEmail, getName } from 'redux/auth/auth-selectors';
+import { logoutUser } from 'redux/auth/auth-operations';
 
 import { useTabContext } from 'components/ActiveTabContext/ActiveTabContext';
 
+import { NavLink } from 'react-router-dom';
+
 export default function MenuAppBar() {
+  const dispatch = useDispatch();
+
   const isLoggedIn = useSelector(getIsLoggedIn);
   const email = useSelector(getEmail);
+  const name = useSelector(getName);
 
-  const [auth, setAuth] = useState(true);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(false);
 
   const activeTab = useTabContext();
-
-  const handleChange = (event) => {
-    setAuth(event.target.checked);
-  };
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setAnchorEl(false);
   };
-
-  console.log('activeTab: ', activeTab);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" style={{ backgroundColor: '#0c0c0c' }}>
         <Toolbar>
-          <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-            <MenuIcon />
-          </IconButton>
-          <Button
-            variant="contained"
-            startIcon={<HowToRegIcon />}
-            style={{ marginRight: '1rem', backgroundColor: '#0c0c0c' }}
-            onClick={() => activeTab.toggleActive('register')}
-          >
-            Register
-          </Button>
-          <Button
-            variant="contained"
-            startIcon={<LoginIcon />}
-            style={{ marginRight: '1rem', backgroundColor: '#0c0c0c' }}
-            onClick={() => activeTab.toggleActive('login')}
-          >
-            Log In
-          </Button>
-          <Button
-            variant="contained"
-            startIcon={<ImportContactsIcon />}
-            style={{ marginRight: '1rem', backgroundColor: '#0c0c0c' }}
-          >
-            Contacts
-          </Button>
+          {!isLoggedIn && (
+            <>
+              {/* <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+                <MenuIcon />
+              </IconButton> */}
+
+              <NavLink to="/register">
+                <Link
+                  component="button"
+                  variant="body1"
+                  style={{ marginRight: '1rem', backgroundColor: '#0c0c0c', display: 'flex', alignItems: 'center' }}
+                >
+                  <HowToRegIcon style={{ marginRight: '0.5rem' }} />
+                  Register
+                </Link>
+              </NavLink>
+
+              <NavLink to="/login">
+                <Link
+                  component="button"
+                  variant="body1"
+                  style={{ marginRight: '1rem', backgroundColor: '#0c0c0c', display: 'flex', alignItems: 'center' }}
+                  // onClick={() => activeTab.toggleActive('login')}
+                >
+                  <LoginIcon style={{ marginRight: '0.5rem' }} />
+                  Log In
+                </Link>
+              </NavLink>
+            </>
+          )}
 
           {isLoggedIn && (
+            <NavLink to="/contacts">
+              <Link
+                component="button"
+                variant="body1"
+                style={{ marginRight: '1rem', backgroundColor: '#0c0c0c', display: 'flex', alignItems: 'center' }}
+                // onClick={() => activeTab.toggleActive('login')}
+              >
+                <ImportContactsIcon style={{ marginRight: '0.5rem' }} />
+                Contacts
+              </Link>
+            </NavLink>
+          )}
+
+          {isLoggedIn ? (
             <div>
               <IconButton
                 size="large"
@@ -105,23 +122,15 @@ export default function MenuAppBar() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Log out</MenuItem>
+                <MenuItem onClick={() => dispatch(logoutUser(name))}>Log out</MenuItem>
               </Menu>
               <Typography variant="p">{email}</Typography>
             </div>
-          )}
-
-          {!isLoggedIn && (
+          ) : (
             <div>
               <Typography variant="p">
-                Welcome,{' '}
-                <Link
-                  component="button"
-                  variant="body2"
-                  onClick={() => {
-                    console.info('log in');
-                  }}
-                >
+                Welcome,
+                <Link component="button" variant="body2" onClick={() => activeTab.toggleActive('login')}>
                   guest
                 </Link>
                 !

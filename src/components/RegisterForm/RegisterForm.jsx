@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { registerUser } from 'redux/auth/auth-operations';
 import { useInput } from 'hooks/useInput';
 
-export const RegisterForm = () => {
+export default function RegisterForm() {
   const nameInput = useRef();
   const emailInput = useRef();
   const passwordInput = useRef();
@@ -87,4 +87,4 @@ export const RegisterForm = () => {
       </form>
     </div>
   );
-};
+}
