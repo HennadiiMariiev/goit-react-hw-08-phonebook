@@ -26,6 +26,16 @@ export const loginUser = createAsyncThunk('auth/loginUser', async ({ email, pass
   }
 });
 
+export const currentUser = createAsyncThunk('auth/currentUser', async () => {
+  try {
+    const userData = await userApi.getCurrentUser();
+
+    return userData;
+  } catch (error) {
+    console.log('error', `${error}`);
+  }
+});
+
 export const logoutUser = createAsyncThunk('auth/logoutUser', async (name) => {
   try {
     await userApi.logoutUser();

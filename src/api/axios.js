@@ -22,7 +22,6 @@ export const loginUser = async (credentials) => {
   const { data } = await axios.post('/users/login', credentials);
   token.set(data.token);
 
-  localStorage.setItem('token', data.token);
   return data;
 };
 

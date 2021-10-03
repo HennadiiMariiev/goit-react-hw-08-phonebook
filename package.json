@@ -1,5 +1,5 @@
 {
-  "name": "goit-react-hw-08-phonebook1",
+  "name": "goit-react-hw-08-phonebook",
   "version": "0.1.0",
   "private": true,
   "homepage": "https://hennadiimariiev.github.io/goit-react-hw-08-phonebook",
@@ -33,8 +33,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "server": "json-server --port 7777 --watch db.json"
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [

@@ -33,7 +33,7 @@ export default function MenuAppBar() {
   const email = useSelector(getEmail);
   const name = useSelector(getName);
 
-  const [anchorEl, setAnchorEl] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const activeTab = useTabContext();
 
@@ -42,7 +42,7 @@ export default function MenuAppBar() {
   };
 
   const handleClose = () => {
-    setAnchorEl(false);
+    setAnchorEl(null);
   };
 
   return (
