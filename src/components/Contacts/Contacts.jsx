@@ -8,32 +8,51 @@ import {
   StyledButton,
 } from './StyledContactsComponents';
 
+import { IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+
+import { TextField } from '@mui/material';
+import ContactItem from 'components/ContactItem/ContactItem';
+
 import { StyledBanner } from 'components/AppComponents/AppComponents';
 
 import { StyledButton as StyledPrimaryButton } from 'components/Form/StyledFormComponents';
 import { fetchRemoveSingleContact, fetchRemoveAllContacts } from 'redux/items/items-operations';
 import { useSelector, useDispatch } from 'react-redux';
-import { getFilteredContacts, getState } from 'redux/contacts-selectors';
+import { getFilteredContacts, getState, getItems, getFilter } from 'redux/contacts-selectors';
+import { useMemo } from 'react';
 
 export const Contacts = () => {
   const state = useSelector(getState);
+  const items = useSelector(getItems);
+  const filter = useSelector(getFilter);
   const dispatch = useDispatch();
 
-  const makeContactsList = getFilteredContacts(state).map(({ name, number, id }) => {
-    return (
-      <StyledItem key={id}>
-        <StyledName>{name}</StyledName>
-        <StyledNumber>{number}</StyledNumber>
-        <StyledButton
-          onClick={(event) => {
-            dispatch(fetchRemoveSingleContact({ id: event.target.value, name }));
-          }}
-          value={id}
-        >
-          Remove
-        </StyledButton>
-      </StyledItem>
-    );
+  const getFilteredItems = useMemo(
+    () =>
+      function () {
+        if (filter.trim() === '') {
+          return items;
+        }
+
+        return items.filter((contact) => {
+          console.log(
+            'includes:',
+            contact.name.toLowerCase(),
+            filter.toLowerCase(),
+            contact.name.toLowerCase().includes(filter.toLowerCase())
+          );
+          return contact.name.toLowerCase().includes(filter.toLowerCase());
+        });
+      },
+    [items, filter]
+  );
+
+  const makeContactsList = getFilteredItems().map(({ name, number, id }) => {
+    // console.log('{ name, number, id } ', { name, number, id });
+    return <ContactItem id={id} name={name} number={number} />;
   });
 
   return (

@@ -13,6 +13,7 @@ export default function ContactsPage() {
   useEffect(() => {
     dispatch(contactsOperations.fetchContacts());
   }, [dispatch]);
+
   return (
     <>
       <Form />

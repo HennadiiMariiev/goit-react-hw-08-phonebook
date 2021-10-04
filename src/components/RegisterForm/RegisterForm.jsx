@@ -1,16 +1,47 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { registerUser } from 'redux/auth/auth-operations';
 import { useInput } from 'hooks/useInput';
+import { LoadingButton } from '@mui/lab';
+import { useSelector } from 'react-redux';
+import { getIsFetching } from 'redux/auth/auth-selectors';
+
+import TextField from '@mui/material/TextField';
+
+// export const useInput = (input) => {
+//   const [value, setValue] = useState(() => '');
+
+//   useEffect(() => {
+//     function isValidInput(input) {
+//       if (!input.value.match(input.pattern) && input.value.length) return false;
+
+//       return true;
+//     }
+
+//     if (!isValidInput(input.current)) {
+//       input.current.style = 'background-color: #f7d7d7;';
+//     } else {
+//       input.current.style = 'background-color: transparent;';
+//     }
+//   }, [value, input]);
+
+//   return [value, setValue];
+// };
 
 export default function RegisterForm() {
-  const nameInput = useRef();
-  const emailInput = useRef();
-  const passwordInput = useRef();
+  // const nameInput = useRef();
+  // const emailInput = useRef();
+  // const passwordInput = useRef();
 
-  const [name, setName] = useInput(nameInput);
-  const [email, setEmail] = useInput(emailInput);
-  const [password, setPassword] = useInput(passwordInput);
+  const isFetching = useSelector(getIsFetching);
+
+  // const [name, setName] = useInput(nameInput);
+  // const [email, setEmail] = useInput(emailInput);
+  // const [password, setPassword] = useInput(passwordInput);
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const dispatch = useDispatch();
 
@@ -48,7 +79,9 @@ export default function RegisterForm() {
   return (
     <div>
       <form style={{ display: 'flex', flexDirection: 'column', padding: '1rem' }}>
-        <input
+        <TextField
+          label="Name"
+          variant="outlined"
           type="text"
           name="name"
           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
@@ -56,10 +89,12 @@ export default function RegisterForm() {
           placeholder="Please, type contact name"
           required
           value={name}
-          ref={nameInput}
+          // ref={nameInput}
           onChange={onInputChange}
         />
-        <input
+        <TextField
+          label="E-mail"
+          variant="outlined"
           type="email"
           name="email"
           pattern="/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/"
@@ -67,10 +102,12 @@ export default function RegisterForm() {
           placeholder="Please, type email"
           required
           value={email}
-          ref={emailInput}
+          // ref={emailInput}
           onChange={onInputChange}
         />
-        <input
+        <TextField
+          label="Password"
+          variant="outlined"
           type="password"
           name="password"
           placeholder="Please, type password"
@@ -78,12 +115,12 @@ export default function RegisterForm() {
           title="Password should contains from 8 to 12 symbols..."
           required
           value={password}
-          ref={passwordInput}
+          // ref={passwordInput}
           onChange={onInputChange}
         />
-        <button type="submit" onClick={(e) => onSubmit(e)}>
+        <LoadingButton type="submit" onClick={(e) => onSubmit(e)} loading={isFetching}>
           Register
-        </button>
+        </LoadingButton>
       </form>
     </div>
   );

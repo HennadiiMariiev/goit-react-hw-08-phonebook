@@ -6,18 +6,13 @@ import { loadingReducer } from 'redux/loading/loading-reducer';
 import { errorReducer } from 'redux/error/error-reducer';
 import authReducer from 'redux/auth/auth-slice';
 
-const initialState = {
-  contacts: {
-    items: [],
-    filter: '',
-    isLoading: false,
-    error: null,
-  },
-  auth: {
-    user: { name: null, email: null },
-    token: null,
-    isLoggedIn: false,
-  },
+import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+
+const persistConfig = {
+  key: 'auth',
+  version: 1,
+  storage,
 };
 
 const contactsReducer = combineReducers({
@@ -32,8 +27,18 @@ const rootReducer = combineReducers({
   auth: authReducer,
 });
 
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
 const store = configureStore({
-  reducer: rootReducer,
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
 
-export { initialState, store };
+let persistor = persistStore(store);
+
+export { store, persistor };

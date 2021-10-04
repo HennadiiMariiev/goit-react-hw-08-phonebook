@@ -1,16 +1,21 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { loginUser } from 'redux/auth/auth-operations';
 import { useInput } from 'hooks/useInput';
 
+import LoadingButton from '@mui/lab/LoadingButton';
+import { useSelector } from 'react-redux';
+import { getIsFetching } from 'redux/auth/auth-selectors';
+
+import TextField from '@mui/material/TextField';
+
 export default function SignInForm() {
-  const emailInput = useRef();
-  const passwordInput = useRef();
-
-  const [email, setEmail] = useInput(emailInput);
-  const [password, setPassword] = useInput(passwordInput);
-
   const dispatch = useDispatch();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const isFetching = useSelector(getIsFetching);
 
   const onInputChange = ({ target: { name, value } }) => {
     switch (name) {
@@ -41,7 +46,9 @@ export default function SignInForm() {
   return (
     <div>
       <form style={{ display: 'flex', flexDirection: 'column', padding: '1rem' }}>
-        <input
+        <TextField
+          label="E-mail"
+          variant="outlined"
           type="email"
           name="email"
           pattern="/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/"
@@ -49,10 +56,12 @@ export default function SignInForm() {
           placeholder="Please, type email"
           required
           value={email}
-          ref={emailInput}
+          // ref={emailInput}
           onChange={onInputChange}
         />
-        <input
+        <TextField
+          label="Password"
+          variant="outlined"
           type="password"
           name="password"
           placeholder="Please, type password"
@@ -60,12 +69,12 @@ export default function SignInForm() {
           title="Password should contains from 8 to 12 symbols..."
           required
           value={password}
-          ref={passwordInput}
+          // ref={passwordInput}
           onChange={onInputChange}
         />
-        <button type="submit" onClick={(e) => onSubmit(e)}>
+        <LoadingButton type="submit" onClick={(e) => onSubmit(e)} loading={isFetching}>
           Sign In
-        </button>
+        </LoadingButton>
       </form>
     </div>
   );

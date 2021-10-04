@@ -1,47 +1,61 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import * as userApi from 'api/axios';
 import { toastMessage } from 'components/Form/form-helper';
+import axios from 'axios';
 
-export const registerUser = createAsyncThunk('auth/register', async (data) => {
+axios.defaults.baseURL = 'https://connections-api.herokuapp.com';
+
+const token = {
+  set(token) {
+    axios.defaults.headers.common.Authorization = token;
+  },
+  unset() {
+    axios.defaults.headers.common.Authorization = '';
+  },
+};
+
+export const registerUser = createAsyncThunk('auth/register', async (credentials) => {
   try {
-    const userData = await userApi.registerUser(data);
-
-    toastMessage('success', `New user "${userData.user.name}" was registered!`);
-
-    return userData;
+    const { data } = await axios.post('/users/signup', credentials);
+    token.set(data.token);
+    toastMessage('success', `New user "${data.user.name}" was registered!`);
+    return data;
   } catch (error) {
     toastMessage('error', `${error}`);
+    throw new Error(error);
   }
 });
 
 export const loginUser = createAsyncThunk('auth/loginUser', async ({ email, password }) => {
   try {
-    const userData = await userApi.loginUser({ email, password });
-
-    toastMessage('success', `User "${userData.user.name}" was logged in!`);
-
-    return userData;
+    const { data } = await axios.post('/users/login', { email, password });
+    token.set(data.token);
+    toastMessage('success', `User "${data.user.name}" was logged in!`);
+    return data;
   } catch (error) {
     toastMessage('error', `${error}`);
+    throw new Error(error);
   }
 });
 
 export const currentUser = createAsyncThunk('auth/currentUser', async () => {
   try {
-    const userData = await userApi.getCurrentUser();
+    const { data } = await axios.get('/users/current');
 
-    return userData;
+    return data;
   } catch (error) {
     console.log('error', `${error}`);
+    throw new Error(error);
   }
 });
 
 export const logoutUser = createAsyncThunk('auth/logoutUser', async (name) => {
   try {
-    await userApi.logoutUser();
+    await axios.post('/users/logout');
+    token.unset();
 
     toastMessage('success', `User "${name}" was logged out!`);
   } catch (error) {
     toastMessage('error', `${error}`);
+    throw new Error(error);
   }
 });

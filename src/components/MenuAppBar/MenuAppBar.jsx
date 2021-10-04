@@ -22,8 +22,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getIsLoggedIn, getEmail, getName } from 'redux/auth/auth-selectors';
 import { logoutUser } from 'redux/auth/auth-operations';
 
-import { useTabContext } from 'components/ActiveTabContext/ActiveTabContext';
-
 import { NavLink } from 'react-router-dom';
 
 export default function MenuAppBar() {
@@ -34,8 +32,6 @@ export default function MenuAppBar() {
   const name = useSelector(getName);
 
   const [anchorEl, setAnchorEl] = useState(null);
-
-  const activeTab = useTabContext();
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -129,8 +125,8 @@ export default function MenuAppBar() {
           ) : (
             <div>
               <Typography variant="p">
-                Welcome,
-                <Link component="button" variant="body2" onClick={() => activeTab.toggleActive('login')}>
+                Welcome,&nbsp;
+                <Link component="button" variant="body2">
                   guest
                 </Link>
                 !

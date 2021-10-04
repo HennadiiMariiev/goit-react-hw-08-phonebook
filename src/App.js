@@ -42,7 +42,7 @@ export default function App() {
           <PrivateRoute path="/contacts" redirectTo="/login" restricted exact>
             <ContactsPage />
           </PrivateRoute>
-          {/* <Redirect to="/" /> */}
+          <Redirect to="/" />
         </Switch>
       </Suspense>
 
