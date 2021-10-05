@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
@@ -14,6 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu/index';
 import { Button } from '@mui/material';
 import Link from '@mui/material/Link';
+import HomeIcon from '@mui/icons-material/Home';
 
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import LoginIcon from '@mui/icons-material/Login';
@@ -47,10 +49,17 @@ export default function MenuAppBar() {
         <Toolbar>
           {!isLoggedIn && (
             <>
-              {/* <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-                <MenuIcon />
-              </IconButton> */}
-
+              <NavLink to="/">
+                <Link
+                  component="button"
+                  variant="body1"
+                  style={{ marginRight: '1rem', backgroundColor: '#0c0c0c', display: 'flex', alignItems: 'center' }}
+                  // onClick={() => activeTab.toggleActive('login')}
+                >
+                  <HomeIcon style={{ marginRight: '0.5rem' }} />
+                  Home
+                </Link>
+              </NavLink>
               <NavLink to="/register">
                 <Link
                   component="button"
@@ -77,17 +86,30 @@ export default function MenuAppBar() {
           )}
 
           {isLoggedIn && (
-            <NavLink to="/contacts">
-              <Link
-                component="button"
-                variant="body1"
-                style={{ marginRight: '1rem', backgroundColor: '#0c0c0c', display: 'flex', alignItems: 'center' }}
-                // onClick={() => activeTab.toggleActive('login')}
-              >
-                <ImportContactsIcon style={{ marginRight: '0.5rem' }} />
-                Contacts
-              </Link>
-            </NavLink>
+            <>
+              <NavLink to="/">
+                <Link
+                  component="button"
+                  variant="body1"
+                  style={{ marginRight: '1rem', backgroundColor: '#0c0c0c', display: 'flex', alignItems: 'center' }}
+                  // onClick={() => activeTab.toggleActive('login')}
+                >
+                  <HomeIcon style={{ marginRight: '0.5rem' }} />
+                  Home
+                </Link>
+              </NavLink>
+              <NavLink to="/contacts">
+                <Link
+                  component="button"
+                  variant="body1"
+                  style={{ marginRight: '1rem', backgroundColor: '#0c0c0c', display: 'flex', alignItems: 'center' }}
+                  // onClick={() => activeTab.toggleActive('login')}
+                >
+                  <ImportContactsIcon style={{ marginRight: '0.5rem' }} />
+                  Contacts
+                </Link>
+              </NavLink>
+            </>
           )}
 
           {isLoggedIn ? (
@@ -115,12 +137,22 @@ export default function MenuAppBar() {
                   vertical: 'top',
                   horizontal: 'right',
                 }}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
+                // open={Boolean(anchorEl)}
+                // onClose={handleClose}
               >
-                <MenuItem onClick={() => dispatch(logoutUser(name))}>Log out</MenuItem>
+                {/* <MenuItem onClick={() => dispatch(logoutUser(name))}>Log out</MenuItem> */}
               </Menu>
               <Typography variant="p">{email}</Typography>
+              <IconButton
+                size="large"
+                aria-label="Log Out"
+                aria-controls="logout"
+                aria-haspopup="true"
+                onClick={() => dispatch(logoutUser(name))}
+                color="inherit"
+              >
+                <LogoutIcon />
+              </IconButton>
             </div>
           ) : (
             <div>

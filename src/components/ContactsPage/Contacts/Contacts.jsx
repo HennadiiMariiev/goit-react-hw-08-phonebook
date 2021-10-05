@@ -14,7 +14,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 
 import { TextField } from '@mui/material';
-import ContactItem from 'components/ContactItem/ContactItem';
+import ContactItem from 'components/ContactsPage/ContactItem/ContactItem';
 
 import { StyledBanner } from 'components/AppComponents/AppComponents';
 
@@ -26,33 +26,10 @@ import { useMemo } from 'react';
 
 export const Contacts = () => {
   const state = useSelector(getState);
-  const items = useSelector(getItems);
-  const filter = useSelector(getFilter);
   const dispatch = useDispatch();
 
-  const getFilteredItems = useMemo(
-    () =>
-      function () {
-        if (filter.trim() === '') {
-          return items;
-        }
-
-        return items.filter((contact) => {
-          console.log(
-            'includes:',
-            contact.name.toLowerCase(),
-            filter.toLowerCase(),
-            contact.name.toLowerCase().includes(filter.toLowerCase())
-          );
-          return contact.name.toLowerCase().includes(filter.toLowerCase());
-        });
-      },
-    [items, filter]
-  );
-
-  const makeContactsList = getFilteredItems().map(({ name, number, id }) => {
-    // console.log('{ name, number, id } ', { name, number, id });
-    return <ContactItem id={id} name={name} number={number} />;
+  const makeContactsList = getFilteredContacts(state).map(({ name, number, id }) => {
+    return <ContactItem id={id} name={name} number={number} key={id} />;
   });
 
   return (

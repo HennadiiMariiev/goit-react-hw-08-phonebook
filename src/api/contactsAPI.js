@@ -14,7 +14,6 @@ export const postSingleContact = async (contact) => {
 };
 
 export const patchSingleContact = async (id, { name, number }) => {
-  console.log('{name, number API}: ', { name, number });
   const { data } = await axios.patch('/contacts/' + id, { name, number });
   return data;
 };

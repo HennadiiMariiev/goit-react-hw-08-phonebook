@@ -1,6 +1,6 @@
 import * as contactsAPI from 'api/contactsAPI';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { toastMessage } from 'components/Form/form-helper';
+import { toastMessage } from 'helpers/form-helper';
 
 export const fetchContacts = createAsyncThunk('items/fetchContacts', async () => {
   try {
@@ -47,7 +47,7 @@ export const fetchRemoveSingleContact = createAsyncThunk('items/fetchRemoveSingl
     await contactsAPI.removeSingleContact(id);
 
     toastMessage('info', `Contact "${name}" was deleted!`);
-
+    console.log('id', id);
     return id;
   } catch (err) {
     toastMessage('error', `${err}`);

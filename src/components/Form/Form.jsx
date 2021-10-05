@@ -7,7 +7,7 @@ import {
   StyledInput,
   StyledButton as StyledPrimaryButton,
 } from './StyledFormComponents';
-import { toastMessage } from './form-helper';
+import { toastMessage } from '../../helpers/form-helper';
 import { useSelector } from 'react-redux';
 import { getItems } from 'redux/contacts-selectors';
 import { useDispatch } from 'react-redux';

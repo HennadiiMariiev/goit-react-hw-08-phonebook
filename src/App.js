@@ -21,8 +21,8 @@ export default function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(authOperations.currentUser());
-  });
+    dispatch(authOperations.fetchCurrentUser());
+  }, [dispatch]);
 
   return (
     <div>

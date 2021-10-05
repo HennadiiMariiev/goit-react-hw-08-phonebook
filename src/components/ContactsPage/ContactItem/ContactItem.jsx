@@ -1,27 +1,21 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-
+import { useDispatch } from 'react-redux';
+import { useContactInput } from 'hooks/useContactInput';
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import { TextField } from '@mui/material';
-
+import { ListItem } from '@mui/material';
+import * as regexp from 'helpers/regexpPatterns';
 import { fetchRemoveSingleContact, fetchPatchSingleContact } from 'redux/items/items-operations';
 
 export default function ContactItem({ id, name, number }) {
-  const dispatch = useDispatch();
-
-  const [nameValue, setNameValue] = useState('');
-  const [numberValue, setNumberValue] = useState('');
-
+  const [nameValue, setNameValue, isNameError] = useContactInput('', name, regexp.name);
+  const [numberValue, setNumberValue, isNumberError] = useContactInput('', number, regexp.number);
   const [isValuesChanged, setIsValueChanged] = useState(false);
 
-  useEffect(() => {
-    setNameValue(name);
-    setNumberValue(number);
-  }, []);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (nameValue !== name || numberValue !== number) setIsValueChanged(true);
@@ -29,21 +23,30 @@ export default function ContactItem({ id, name, number }) {
   }, [nameValue, numberValue]);
 
   return (
-    <li key={id}>
-      <TextField label="Name" variant="standard" value={nameValue} onChange={(e) => setNameValue(e.target.value)} />
+    <ListItem>
+      <TextField
+        label="Name"
+        variant="standard"
+        value={nameValue}
+        onChange={(e) => setNameValue(e.target.value)}
+        error={isNameError}
+        helperText={isNameError ? 'Min 2 letters & start with capital letter.' : ' '}
+      />
 
       <TextField
         label="Number"
         variant="standard"
         value={numberValue}
         onChange={(e) => setNumberValue(e.target.value)}
+        error={isNumberError}
+        helperText={isNumberError ? 'Should contain 10 digits, - and ( ).' : ' '}
       />
 
       <IconButton
         color="primary"
         aria-label="Edit contact"
         component="span"
-        disabled={!isValuesChanged}
+        disabled={Boolean(!isValuesChanged || isNameError || isNumberError)}
         onClick={() => {
           dispatch(fetchPatchSingleContact({ id, name: nameValue, number: numberValue }));
           setIsValueChanged(false);
@@ -56,13 +59,10 @@ export default function ContactItem({ id, name, number }) {
         color="primary"
         aria-label="Remove contact"
         component="span"
-        onClick={() => {
-          console.log('{id, name}: ', { id, name });
-          dispatch(fetchRemoveSingleContact({ id, name }));
-        }}
+        onClick={() => dispatch(fetchRemoveSingleContact({ id, name }))}
       >
         <DeleteIcon />
       </IconButton>
-    </li>
+    </ListItem>
   );
 }

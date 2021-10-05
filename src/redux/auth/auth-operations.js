@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { toastMessage } from 'components/Form/form-helper';
+import { toastMessage } from 'helpers/form-helper';
 import axios from 'axios';
 
 axios.defaults.baseURL = 'https://connections-api.herokuapp.com';
@@ -37,7 +37,15 @@ export const loginUser = createAsyncThunk('auth/loginUser', async ({ email, pass
   }
 });
 
-export const currentUser = createAsyncThunk('auth/currentUser', async () => {
+export const fetchCurrentUser = createAsyncThunk('auth/currentUser', async (_, thunkAPI) => {
+  const {
+    auth: { token: persistedToken },
+  } = thunkAPI.getState();
+
+  if (persistedToken === null) return thunkAPI.rejectWithValue();
+
+  token.set(persistedToken);
+
   try {
     const { data } = await axios.get('/users/current');
 
