@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function HomePage() {
   return (
-    <div>
+    <div style={{ marginTop: '4rem', padding: '1rem' }}>
       <h1>Welcome to PhoneBook!</h1>
       <p>
         This is very simple application for saving your contacts, created as a homework on GoIT FullStack JS Course!

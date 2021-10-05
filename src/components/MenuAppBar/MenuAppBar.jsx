@@ -16,6 +16,7 @@ import Menu from '@mui/material/Menu/index';
 import { Button } from '@mui/material';
 import Link from '@mui/material/Link';
 import HomeIcon from '@mui/icons-material/Home';
+import { Tooltip } from '@mui/material';
 
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import LoginIcon from '@mui/icons-material/Login';
@@ -45,16 +46,32 @@ export default function MenuAppBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" style={{ backgroundColor: '#0c0c0c' }}>
-        <Toolbar>
+      <AppBar
+        position="fixed"
+        style={{
+          backgroundColor: '#0c0c0c',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Toolbar
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+          }}
+        >
           {!isLoggedIn && (
-            <>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <NavLink to="/">
                 <Link
                   component="button"
                   variant="body1"
                   style={{ marginRight: '1rem', backgroundColor: '#0c0c0c', display: 'flex', alignItems: 'center' }}
-                  // onClick={() => activeTab.toggleActive('login')}
                 >
                   <HomeIcon style={{ marginRight: '0.5rem' }} />
                   Home
@@ -76,23 +93,21 @@ export default function MenuAppBar() {
                   component="button"
                   variant="body1"
                   style={{ marginRight: '1rem', backgroundColor: '#0c0c0c', display: 'flex', alignItems: 'center' }}
-                  // onClick={() => activeTab.toggleActive('login')}
                 >
                   <LoginIcon style={{ marginRight: '0.5rem' }} />
                   Log In
                 </Link>
               </NavLink>
-            </>
+            </div>
           )}
 
           {isLoggedIn && (
-            <>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <NavLink to="/">
                 <Link
                   component="button"
                   variant="body1"
                   style={{ marginRight: '1rem', backgroundColor: '#0c0c0c', display: 'flex', alignItems: 'center' }}
-                  // onClick={() => activeTab.toggleActive('login')}
                 >
                   <HomeIcon style={{ marginRight: '0.5rem' }} />
                   Home
@@ -103,29 +118,27 @@ export default function MenuAppBar() {
                   component="button"
                   variant="body1"
                   style={{ marginRight: '1rem', backgroundColor: '#0c0c0c', display: 'flex', alignItems: 'center' }}
-                  // onClick={() => activeTab.toggleActive('login')}
                 >
                   <ImportContactsIcon style={{ marginRight: '0.5rem' }} />
                   Contacts
                 </Link>
               </NavLink>
-            </>
+            </div>
           )}
 
           {isLoggedIn ? (
             <div>
               <IconButton
-                size="large"
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
                 onClick={handleMenu}
                 color="inherit"
               >
-                <AccountCircle />
+                <AccountCircle size="large" />
               </IconButton>
 
-              <Menu
+              {/* <Menu
                 id="menu-appbar"
                 anchorEl={anchorEl}
                 anchorOrigin={{
@@ -137,22 +150,24 @@ export default function MenuAppBar() {
                   vertical: 'top',
                   horizontal: 'right',
                 }}
-                // open={Boolean(anchorEl)}
-                // onClose={handleClose}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
               >
-                {/* <MenuItem onClick={() => dispatch(logoutUser(name))}>Log out</MenuItem> */}
-              </Menu>
+                <MenuItem onClick={() => dispatch(logoutUser(name))}>Log out</MenuItem>
+              </Menu> */}
               <Typography variant="p">{email}</Typography>
-              <IconButton
-                size="large"
-                aria-label="Log Out"
-                aria-controls="logout"
-                aria-haspopup="true"
-                onClick={() => dispatch(logoutUser(name))}
-                color="inherit"
-              >
-                <LogoutIcon />
-              </IconButton>
+              <Tooltip title="Log Out" arrow>
+                <IconButton
+                  size="large"
+                  aria-label="Log Out"
+                  aria-controls="logout"
+                  aria-haspopup="true"
+                  onClick={() => dispatch(logoutUser(name))}
+                  color="inherit"
+                >
+                  <LogoutIcon />
+                </IconButton>
+              </Tooltip>
             </div>
           ) : (
             <div>

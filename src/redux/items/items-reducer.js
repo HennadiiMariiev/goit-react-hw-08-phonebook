@@ -1,4 +1,4 @@
-import { createReducer, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 import {
   fetchContacts,
@@ -24,7 +24,7 @@ const itemsSlice = createSlice({
       state.push(action.payload);
     },
     [fetchPatchSingleContact.fulfilled](state, action) {
-      /* Sorry about this Really Bad Code. I have no idea how to mutate element in Array in Immer
+      /* Sorry about this Really Bad Code below. I have no idea how to mutate element in Array in Immer
        * without this crutches :D     In Map-function it doesn`t work. PatchContact works in
        * createReducer, but not here((
        */

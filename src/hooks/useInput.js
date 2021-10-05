@@ -1,21 +1,15 @@
 import { useState, useEffect } from 'react';
 
-export const useInput = (input) => {
-  const [value, setValue] = useState(() => '');
+export const useInput = (initial, pattern) => {
+  const [value, setValue] = useState(initial);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    function isValidInput(input) {
-      if (!input.value.match(input.pattern) && input.value.length) return false;
+    if (pattern.test(value)) {
+      console.log(pattern.test(value));
+      setIsError(false);
+    } else setIsError(true);
+  }, [value]);
 
-      return true;
-    }
-
-    if (!isValidInput(input.current)) {
-      input.current.style = 'background-color: #f7d7d7;';
-    } else {
-      input.current.style = 'background-color: transparent;';
-    }
-  }, [value, input]);
-
-  return [value, setValue];
+  return [value, setValue, isError];
 };

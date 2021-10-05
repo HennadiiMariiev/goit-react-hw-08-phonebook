@@ -13,9 +13,14 @@ export const Filter = () => {
   return (
     <TextField
       label="Search name"
-      variant="standard"
+      variant="outlined"
       onChange={(event) => dispatch(setFilter(event.target.value))}
       disabled={items.length ? false : true}
+      style={{
+        marginBottom: '2rem',
+        background: '#FFFFFF',
+        minWidth: '350px',
+      }}
     />
   );
 };
