@@ -1,0 +1,49 @@
+.wrapper {
+    margin-top: 6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & .icon {
+        font-size: 1.5rem;
+    }
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    padding: 1.5rem 2rem 2rem;
+    border: 1px solid #1976d2;
+    background-color: #FFFFFF;
+    border-radius: 5px;
+    min-width: 500px;
+
+    & h4 {
+        color: #1976d2;
+        text-align: center;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    & .control {
+        min-width: 300px;
+        margin-bottom: 1rem;
+    }
+}
+
+.input {
+    &:not(:last-child){
+        margin-bottom: 1rem;
+    }
+}
+
+.loadButton {
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin-top: 0.5rem;
+    width: 250px;
+    align-self: center;
+}
+

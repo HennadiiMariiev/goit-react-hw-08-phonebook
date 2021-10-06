@@ -7,13 +7,16 @@ import { Provider } from 'react-redux';
 import { persistor, store } from 'redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter } from 'react-router-dom';
+import { NotificationProvider } from 'components/NotificationProvider/NotificationProvider';
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <App />
+          <NotificationProvider>
+            <App />
+          </NotificationProvider>
         </PersistGate>
       </Provider>
     </BrowserRouter>

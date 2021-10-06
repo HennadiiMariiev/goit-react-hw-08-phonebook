@@ -13,10 +13,14 @@ import { fetchRemoveSingleContact, fetchPatchSingleContact } from 'redux/items/i
 import * as helperText from 'helpers/helper-text';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import { Divider } from '@mui/material';
+import { isAllowedKeyCode } from 'helpers/checkKeyCode';
+import { isValidPhoneLength } from 'helpers/checkPhoneLength';
+
+import styles from 'components/ContactsPage/contactPage.module.scss';
 
 export default function ContactItem({ id, name, number }) {
-  const [nameValue, setNameValue, isNameError] = useContactInput('', name, regexp.name);
-  const [numberValue, setNumberValue, isNumberError] = useContactInput('', number, regexp.number);
+  const [nameValue, setNameValue, isNameError] = useContactInput('', regexp.name, name);
+  const [numberValue, setNumberValue] = useContactInput('', regexp.number, number);
   const [isValuesChanged, setIsValueChanged] = useState(false);
 
   const dispatch = useDispatch();
@@ -26,65 +30,80 @@ export default function ContactItem({ id, name, number }) {
     else setIsValueChanged(false);
   }, [nameValue, numberValue]);
 
+  const onInputChange = (event) => {
+    switch (event.target.name) {
+      case 'name':
+        setNameValue(event.target.value);
+        break;
+
+      case 'number':
+        if (isAllowedKeyCode(event)) setNumberValue(event.target.value);
+        break;
+
+      default:
+        return;
+    }
+  };
+
+  const isSaveButtonDisabled = () => {
+    if (isNameError || !isValidPhoneLength(numberValue)) return true;
+    return false;
+  };
+
   return (
-    <ListItem
-      style={{
-        background: '#FFFFFF',
-        padding: '1rem 2rem',
-        minHeight: '5.5rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-      }}
-    >
-      <Tooltip title={`Name: ${nameValue} Number: ${numberValue}`} arrow>
-        <ContactPhoneIcon style={{ marginRight: '1rem', alignSelf: 'center', color: '#1976d2' }} />
-      </Tooltip>
-      <TextField
-        // label="Name"
-        variant="standard"
-        value={nameValue}
-        onChange={(e) => setNameValue(e.target.value)}
-        error={isNameError}
-        helperText={isNameError ? helperText.name : ''}
-        style={{ marginRight: '0.5rem', minWidth: '250px' }}
-      />
+    <>
+      <ListItem className={styles.item}>
+        <Tooltip title={`Name: ${nameValue} Number: ${numberValue}`} arrow>
+          <ContactPhoneIcon className={styles.icon} />
+        </Tooltip>
+        <TextField
+          label="Name"
+          name="name"
+          variant="standard"
+          value={nameValue}
+          onChange={onInputChange}
+          error={isNameError}
+          helperText={isNameError ? helperText.name : ' '}
+          className={styles.input}
+        />
 
-      <TextField
-        // label="Number"
-        variant="standard"
-        value={numberValue}
-        onChange={(e) => setNumberValue(e.target.value)}
-        error={isNumberError}
-        helperText={isNumberError ? helperText.number : ''}
-        style={{ marginRight: '0.5rem', minWidth: '250px' }}
-      />
-      <Tooltip title="Save contact" arrow>
-        <IconButton
-          color="primary"
-          aria-label="Edit contact"
-          component="span"
-          disabled={Boolean(!isValuesChanged || isNameError || isNumberError)}
-          onClick={() => {
-            dispatch(fetchPatchSingleContact({ id, name: nameValue, number: numberValue }));
-            setIsValueChanged(false);
-          }}
-        >
-          <SaveIcon />
-        </IconButton>
-      </Tooltip>
+        <TextField
+          label="Number"
+          name="number"
+          variant="standard"
+          value={numberValue}
+          onChange={onInputChange}
+          error={!isValidPhoneLength(numberValue)}
+          helperText={!isValidPhoneLength(numberValue) ? helperText.number : ' '}
+          className={styles.input}
+        />
+        <Tooltip title="Save contact" arrow>
+          <IconButton
+            color="primary"
+            aria-label="Edit contact"
+            component="span"
+            disabled={isSaveButtonDisabled() || !isValuesChanged}
+            onClick={() => {
+              dispatch(fetchPatchSingleContact({ id, name: nameValue, number: numberValue }));
+              setIsValueChanged(false);
+            }}
+          >
+            <SaveIcon />
+          </IconButton>
+        </Tooltip>
 
-      <Tooltip title="Delete contact" arrow>
-        <IconButton
-          color="primary"
-          aria-label="Remove contact"
-          component="span"
-          onClick={() => dispatch(fetchRemoveSingleContact({ id, name }))}
-        >
-          <DeleteIcon />
-        </IconButton>
-      </Tooltip>
-    </ListItem>
+        <Tooltip title="Delete contact" arrow>
+          <IconButton
+            color="primary"
+            aria-label="Remove contact"
+            component="span"
+            onClick={() => dispatch(fetchRemoveSingleContact({ id, name }))}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
+      </ListItem>
+      <Divider light />
+    </>
   );
 }

@@ -1,20 +1,17 @@
 import { ToastContainer } from 'react-toastify';
-
 import { useDispatch } from 'react-redux';
-
-import 'react-toastify/dist/ReactToastify.css';
-
 import MenuAppBar from 'components/MenuAppBar/MenuAppBar';
-
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
 import { PrivateRoute } from 'components/AppRoutes/PrivateRoute';
 import { PublicRoute } from 'components/AppRoutes/PublicRoute';
 import * as authOperations from 'redux/auth/auth-operations';
+import { CustomizedSnackbar } from 'components/CustomizedSnackbar/CustomizedSnackbar';
+import { Footer } from 'components/Footer/Footer';
+import 'react-toastify/dist/ReactToastify.css';
 
 const HomePage = lazy(() => import('components/HomePage/HomePage' /* webpackChunkName: "home-page"*/));
-const RegisterForm = lazy(() => import('components/RegisterForm/RegisterForm' /* webpackChunkName: "register-page"*/));
-const SignInForm = lazy(() => import('components/SignInForm/SignInForm' /* webpackChunkName: "signin-page"*/));
+const TemplateForm = lazy(() => import('components/TemplateForm/TemplateForm' /* webpackChunkName: "form-page"*/));
 const ContactsPage = lazy(() => import('components/ContactsPage/ContactsPage' /* webpackChunkName: "contacts-page"*/));
 
 export default function App() {
@@ -34,10 +31,10 @@ export default function App() {
             <HomePage />
           </Route>
           <PublicRoute path="/login" redirectTo="/contacts" restricted exact>
-            <SignInForm />
+            <TemplateForm type="login" />
           </PublicRoute>
           <PublicRoute path="/register" redirectTo="/contacts" restricted exact>
-            <RegisterForm />
+            <TemplateForm type="register" />
           </PublicRoute>
           <PrivateRoute path="/contacts" redirectTo="/login" restricted exact>
             <ContactsPage />
@@ -46,6 +43,8 @@ export default function App() {
         </Switch>
       </Suspense>
 
+      <Footer></Footer>
+      <CustomizedSnackbar />
       <ToastContainer />
     </div>
   );

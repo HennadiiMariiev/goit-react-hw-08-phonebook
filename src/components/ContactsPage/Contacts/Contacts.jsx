@@ -1,17 +1,5 @@
-import {
-  StyledItem,
-  StyledName,
-  StyledNumber,
-  StyledDiv,
-  StyledList,
-  StyledSubTitle,
-} from './StyledContactsComponents';
-
 import ContactItem from 'components/ContactsPage/ContactItem/ContactItem';
 import Divider from '@mui/material/Divider';
-
-import { StyledBanner } from 'components/AppComponents/AppComponents';
-
 import { fetchRemoveAllContacts } from 'redux/items/items-operations';
 import { useSelector, useDispatch } from 'react-redux';
 import { getFilteredContacts, getState } from 'redux/contacts-selectors';
@@ -19,61 +7,36 @@ import { Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Typography } from '@mui/material';
 
+import styles from 'components/ContactsPage/contactPage.module.scss';
+
 export const Contacts = () => {
   const state = useSelector(getState);
   const dispatch = useDispatch();
 
   const makeContactsList = getFilteredContacts(state).map(({ name, number, id }) => {
-    return (
-      <>
-        <ContactItem id={id} name={name} number={number} key={id} />
-        <Divider light />
-      </>
-    );
+    return <ContactItem id={id} name={name} number={number} key={id} />;
   });
 
   return (
-    <div
-      style={{
-        minWidth: '700px',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-      }}
-    >
+    <div className={styles.contacts}>
       <Divider variant="middle" />
       {makeContactsList.length === 0 ? (
-        <Typography
-          variant="h3"
-          component="h3"
-          style={{
-            padding: '1rem',
-            background: '#FFFFFF',
-            color: '#1976d2',
-          }}
-        >
+        <Typography variant="h4" component="h4" className={styles.noContacts}>
           No contacts...
         </Typography>
       ) : (
-        <div
-          style={{
-            padding: '1rem',
-          }}
-        >
-          <Typography
-            variant="h4"
-            component="h4"
-            style={{
-              marginBottom: '1rem',
-              color: '#1976d2',
-            }}
-          >
+        <div className={styles.wrapper}>
+          <Typography variant="h4" component="h4" className={styles.title}>
             Contacts
           </Typography>
-          <StyledList>{makeContactsList}</StyledList>
+          <ul className={styles.list}>{makeContactsList}</ul>
 
-          <Button variant="contained" startIcon={<DeleteIcon />} onClick={() => dispatch(fetchRemoveAllContacts())}>
+          <Button
+            variant="contained"
+            className={styles.button}
+            startIcon={<DeleteIcon className={styles.icon} />}
+            onClick={() => dispatch(fetchRemoveAllContacts())}
+          >
             Delete all
           </Button>
         </div>

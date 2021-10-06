@@ -17,7 +17,7 @@ export const registerUser = createAsyncThunk('auth/register', async (credentials
   try {
     const { data } = await axios.post('/users/signup', credentials);
     token.set(data.token);
-    toastMessage('success', `New user "${data.user.name}" was registered!`);
+    toastMessage('info', `New user "${data.user.name}" was registered!`);
     return data;
   } catch (error) {
     toastMessage('error', `${error}`);
@@ -29,7 +29,7 @@ export const loginUser = createAsyncThunk('auth/loginUser', async ({ email, pass
   try {
     const { data } = await axios.post('/users/login', { email, password });
     token.set(data.token);
-    toastMessage('success', `User "${data.user.name}" was logged in!`);
+    toastMessage('info', `User "${data.user.name}" was logged in!`);
     return data;
   } catch (error) {
     toastMessage('error', `${error}`);
@@ -61,7 +61,7 @@ export const logoutUser = createAsyncThunk('auth/logoutUser', async (name) => {
     await axios.post('/users/logout');
     token.unset();
 
-    toastMessage('success', `User "${name}" was logged out!`);
+    toastMessage('info', `User "${name}" was logged out!`);
   } catch (error) {
     toastMessage('error', `${error}`);
     throw new Error(error);
