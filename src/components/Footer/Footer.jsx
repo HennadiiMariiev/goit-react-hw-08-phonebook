@@ -10,7 +10,7 @@ export function Footer() {
         Developed by GoIT student
       </Typography>
       <Typography variant="p" component="p">
-        &copy; 2021
+        Copyright &copy; 2021
       </Typography>
     </div>
   );

@@ -8,6 +8,7 @@ import MenuAppBar from 'components/MenuAppBar/MenuAppBar';
 import { CustomizedSnackbar } from 'components/CustomizedSnackbar/CustomizedSnackbar';
 import { Footer } from 'components/Footer/Footer';
 import { Container } from '@mui/material';
+import { SnackbarProvider } from 'notistack';
 
 import * as authOperations from 'redux/auth/auth-operations';
 import 'react-toastify/dist/ReactToastify.css';
@@ -29,21 +30,30 @@ export default function App() {
 
       <Container style={{ paddingBottom: '5rem' }}>
         <Suspense fallback={<p>Loading...</p>}>
-          <Switch>
-            <Route path="/" exact>
-              <HomePage />
-            </Route>
-            <PublicRoute path="/login" redirectTo="/contacts" restricted exact>
-              <TemplateForm type="login" />
-            </PublicRoute>
-            <PublicRoute path="/register" redirectTo="/contacts" restricted exact>
-              <TemplateForm type="register" />
-            </PublicRoute>
-            <PrivateRoute path="/contacts" redirectTo="/login" restricted exact>
-              <ContactsPage />
-            </PrivateRoute>
-            <Redirect to="/" />
-          </Switch>
+          <SnackbarProvider
+            maxSnack={10}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            // TransitionComponent={Slide}
+          >
+            <Switch>
+              <Route path="/" exact>
+                <HomePage />
+              </Route>
+              <PublicRoute path="/login" redirectTo="/contacts" restricted exact>
+                <TemplateForm type="login" />
+              </PublicRoute>
+              <PublicRoute path="/register" redirectTo="/contacts" restricted exact>
+                <TemplateForm type="register" />
+              </PublicRoute>
+              <PrivateRoute path="/contacts" redirectTo="/login" restricted exact>
+                <ContactsPage />
+              </PrivateRoute>
+              <Redirect to="/" />
+            </Switch>
+          </SnackbarProvider>
         </Suspense>
       </Container>
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { toastMessage } from '../../helpers/form-helper';
 import { useSelector, useDispatch } from 'react-redux';
 import { getItems } from 'redux/contacts-selectors';
@@ -15,8 +15,11 @@ import { isValidPhoneLength } from 'helpers/checkPhoneLength';
 import { useCurrentButton } from 'hooks/useCurrentButton';
 
 import styles from '../TemplateForm/templateForm.module.scss';
+import useNotification from 'hooks/useNotification';
 
 export function ContactForm() {
+  const notification = useNotification();
+  // const snackbar = notification.info('Hello');
   const items = useSelector(getItems);
   const [isCurrentButton, setIsCurrentButton] = useCurrentButton();
   const dispatch = useDispatch();
@@ -54,15 +57,19 @@ export function ContactForm() {
     event.preventDefault();
 
     if (isNameInContacts(items, name)) {
-      toastMessage('warn', `There is an existing contact with name "${name}"!`);
+      // toastMessage('warn', `There is an existing contact with name "${name}"!`);
+      notification.warning(`There is an existing contact with name "${name}"!`);
       return;
     }
 
     setIsCurrentButton(true);
     dispatch(fetchPostSingleContact({ name, number }));
+    notification.success(`Contact "${name}" was added!`);
     clearInputs();
   };
   //#endregion
+
+  console.log('dispatch: ', dispatch);
 
   return (
     <div className={styles.wrapper}>
