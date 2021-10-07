@@ -1,13 +1,15 @@
-import { ToastContainer } from 'react-toastify';
 import { useDispatch } from 'react-redux';
-import MenuAppBar from 'components/MenuAppBar/MenuAppBar';
-import { Switch, Route, Redirect } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { PrivateRoute } from 'components/AppRoutes/PrivateRoute';
 import { PublicRoute } from 'components/AppRoutes/PublicRoute';
-import * as authOperations from 'redux/auth/auth-operations';
+import { ToastContainer } from 'react-toastify';
+import MenuAppBar from 'components/MenuAppBar/MenuAppBar';
 import { CustomizedSnackbar } from 'components/CustomizedSnackbar/CustomizedSnackbar';
 import { Footer } from 'components/Footer/Footer';
+import { Container } from '@mui/material';
+
+import * as authOperations from 'redux/auth/auth-operations';
 import 'react-toastify/dist/ReactToastify.css';
 
 const HomePage = lazy(() => import('components/HomePage/HomePage' /* webpackChunkName: "home-page"*/));
@@ -25,25 +27,27 @@ export default function App() {
     <div>
       <MenuAppBar />
 
-      <Suspense fallback={<p>Loading...</p>}>
-        <Switch>
-          <Route path="/" exact>
-            <HomePage />
-          </Route>
-          <PublicRoute path="/login" redirectTo="/contacts" restricted exact>
-            <TemplateForm type="login" />
-          </PublicRoute>
-          <PublicRoute path="/register" redirectTo="/contacts" restricted exact>
-            <TemplateForm type="register" />
-          </PublicRoute>
-          <PrivateRoute path="/contacts" redirectTo="/login" restricted exact>
-            <ContactsPage />
-          </PrivateRoute>
-          <Redirect to="/" />
-        </Switch>
-      </Suspense>
+      <Container style={{ paddingBottom: '5rem' }}>
+        <Suspense fallback={<p>Loading...</p>}>
+          <Switch>
+            <Route path="/" exact>
+              <HomePage />
+            </Route>
+            <PublicRoute path="/login" redirectTo="/contacts" restricted exact>
+              <TemplateForm type="login" />
+            </PublicRoute>
+            <PublicRoute path="/register" redirectTo="/contacts" restricted exact>
+              <TemplateForm type="register" />
+            </PublicRoute>
+            <PrivateRoute path="/contacts" redirectTo="/login" restricted exact>
+              <ContactsPage />
+            </PrivateRoute>
+            <Redirect to="/" />
+          </Switch>
+        </Suspense>
+      </Container>
 
-      <Footer></Footer>
+      <Footer />
       <CustomizedSnackbar />
       <ToastContainer />
     </div>

@@ -1,34 +1,44 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useContactInput } from 'hooks/useContactInput';
-import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
-import { TextField } from '@mui/material';
-import { ListItem } from '@mui/material';
+import UndoIcon from '@mui/icons-material/Undo';
+import { TextField, ListItem, Divider } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import * as regexp from 'helpers/regexpPatterns';
-import { fetchRemoveSingleContact, fetchPatchSingleContact } from 'redux/items/items-operations';
 import * as helperText from 'helpers/helper-text';
+import { fetchRemoveSingleContact, fetchPatchSingleContact } from 'redux/items/items-operations';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
-import { Divider } from '@mui/material';
 import { isAllowedKeyCode } from 'helpers/checkKeyCode';
 import { isValidPhoneLength } from 'helpers/checkPhoneLength';
+import { getIsLoading } from 'redux/loading/loading-selector';
+import { ButtonWrapper } from './ButtonWrapper';
+import { CustomizedCircularProgress } from './CustomizedCircularProgress';
+import { isIdInContacts } from 'helpers/isNameInContacts';
+import { getItems } from 'redux/contacts-selectors';
+import { toastMessage } from 'helpers/form-helper';
+import Fab from '@mui/material/Fab';
 
 import styles from 'components/ContactsPage/contactPage.module.scss';
 
 export default function ContactItem({ id, name, number }) {
   const [nameValue, setNameValue, isNameError] = useContactInput('', regexp.name, name);
   const [numberValue, setNumberValue] = useContactInput('', regexp.number, number);
-  const [isValuesChanged, setIsValueChanged] = useState(false);
+  const [isValuesChanged, setIsValuesChanged] = useState(false);
 
   const dispatch = useDispatch();
+  const isLoading = useSelector(getIsLoading);
+  const contacts = useSelector(getItems);
 
   useEffect(() => {
-    if (nameValue !== name || numberValue !== number) setIsValueChanged(true);
-    else setIsValueChanged(false);
+    if (nameValue !== name || numberValue !== number) setIsValuesChanged(true);
+    else setIsValuesChanged(false);
   }, [nameValue, numberValue]);
+
+  useEffect(() => {
+    if (!isLoading) setIsValuesChanged(false);
+  }, [isLoading]);
 
   const onInputChange = (event) => {
     switch (event.target.name) {
@@ -43,6 +53,21 @@ export default function ContactItem({ id, name, number }) {
       default:
         return;
     }
+  };
+
+  const undoChanges = () => {
+    setNameValue(name);
+    setNumberValue(number);
+    setIsValuesChanged(false);
+  };
+
+  const onSaveContact = () => {
+    if (isIdInContacts(contacts, nameValue, id)) {
+      toastMessage('warn', `There is an existing contact with name "${nameValue}"!`);
+      return;
+    }
+
+    dispatch(fetchPatchSingleContact({ id, name: nameValue, number: numberValue }));
   };
 
   const isSaveButtonDisabled = () => {
@@ -66,7 +91,6 @@ export default function ContactItem({ id, name, number }) {
           helperText={isNameError ? helperText.name : ' '}
           className={styles.input}
         />
-
         <TextField
           label="Number"
           name="number"
@@ -77,31 +101,23 @@ export default function ContactItem({ id, name, number }) {
           helperText={!isValidPhoneLength(numberValue) ? helperText.number : ' '}
           className={styles.input}
         />
-        <Tooltip title="Save contact" arrow>
-          <IconButton
-            color="primary"
-            aria-label="Edit contact"
-            component="span"
-            disabled={isSaveButtonDisabled() || !isValuesChanged}
-            onClick={() => {
-              dispatch(fetchPatchSingleContact({ id, name: nameValue, number: numberValue }));
-              setIsValueChanged(false);
-            }}
-          >
-            <SaveIcon />
-          </IconButton>
-        </Tooltip>
 
-        <Tooltip title="Delete contact" arrow>
-          <IconButton
-            color="primary"
-            aria-label="Remove contact"
-            component="span"
-            onClick={() => dispatch(fetchRemoveSingleContact({ id, name }))}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
+        <ButtonWrapper title="Undo changes" icon={<UndoIcon />} onClick={undoChanges} disabled={!isValuesChanged} />
+
+        <ButtonWrapper
+          title="Save contact"
+          icon={<SaveIcon />}
+          onClick={onSaveContact}
+          disabled={isSaveButtonDisabled() || !isValuesChanged}
+          progress={isValuesChanged && <CustomizedCircularProgress />}
+        />
+
+        <ButtonWrapper
+          title="Delete contact"
+          icon={<DeleteIcon />}
+          onClick={() => dispatch(fetchRemoveSingleContact({ id, name }))}
+          progress={<CustomizedCircularProgress />}
+        />
       </ListItem>
       <Divider light />
     </>

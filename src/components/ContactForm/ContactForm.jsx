@@ -1,31 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { toastMessage } from '../../helpers/form-helper';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getItems } from 'redux/contacts-selectors';
-import { useDispatch } from 'react-redux';
 import { fetchPostSingleContact } from 'redux/items/items-operations';
 import { useContactInput } from 'hooks/useContactInput';
-import { Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { Button } from '@mui/material';
-
-import { FormControl, InputLabel, Input, FormHelperText } from '@mui/material';
+import { isNameInContacts } from 'helpers/isNameInContacts';
+import { FormControl, InputLabel, Input, FormHelperText, Typography } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import * as regexp from 'helpers/regexpPatterns';
 import * as helperText from 'helpers/helper-text';
 import { isAllowedKeyCode } from 'helpers/checkKeyCode';
 import { isValidPhoneLength } from 'helpers/checkPhoneLength';
+import { useCurrentButton } from 'hooks/useCurrentButton';
 
 import styles from '../TemplateForm/templateForm.module.scss';
 
 export function ContactForm() {
   const items = useSelector(getItems);
+  const [isCurrentButton, setIsCurrentButton] = useCurrentButton();
   const dispatch = useDispatch();
 
   const [name, setName, isNameError] = useContactInput('', regexp.name);
   const [number, setNumber] = useContactInput('', regexp.number);
 
   const isSubmitButtonDisabled = () => {
-    if (isNameError || !isValidPhoneLength(number)) return true;
+    if (!name.length || isNameError || !isValidPhoneLength(number)) return true;
     return false;
   };
 
@@ -50,15 +50,15 @@ export function ContactForm() {
     setNumber('');
   };
 
-  const isNameInContacts = (searchName) => items.find(({ name }) => name === searchName);
-
   const submitNewContact = (event) => {
     event.preventDefault();
 
-    if (isNameInContacts(name)) {
+    if (isNameInContacts(items, name)) {
       toastMessage('warn', `There is an existing contact with name "${name}"!`);
       return;
     }
+
+    setIsCurrentButton(true);
     dispatch(fetchPostSingleContact({ name, number }));
     clearInputs();
   };
@@ -94,15 +94,16 @@ export function ContactForm() {
           />
           <FormHelperText id="helper-text">{helperText.number}</FormHelperText>
         </FormControl>
-        <Button
+        <LoadingButton
           variant="contained"
           type="submit"
+          loading={isCurrentButton}
+          disabled={isSubmitButtonDisabled()}
           className={styles.loadButton}
           startIcon={<AddIcon className={styles.icon} />}
-          disabled={isSubmitButtonDisabled()}
         >
           Add contact
-        </Button>
+        </LoadingButton>
       </form>
     </div>
   );

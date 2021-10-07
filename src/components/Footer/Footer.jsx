@@ -6,7 +6,7 @@ import styles from './footer.module.scss';
 export function Footer() {
   return (
     <div className={styles.wrapper}>
-      <Typography variant="h6" component="h4" className={styles.text}>
+      <Typography variant="p" component="p" className={styles.subtitle}>
         Developed by GoIT student
       </Typography>
       <Typography variant="p" component="p">

@@ -8,17 +8,17 @@ import { useContactInput } from 'hooks/useContactInput';
 import TextField from '@mui/material/TextField';
 import * as regexp from 'helpers/regexpPatterns';
 import { Typography } from '@mui/material';
+import * as helperText from 'helpers/helper-text';
 
 import styles from '../TemplateForm/templateForm.module.scss';
 
 export default function TemplateForm({ type }) {
+  const dispatch = useDispatch();
   const isFetching = useSelector(getIsFetching);
 
   const [email, setEmail, isEmailError] = useContactInput('', regexp.email);
   const [name, setName, isNameError] = useContactInput('', regexp.name);
   const [password, setPassword, isPasswordError] = useContactInput('', regexp.password);
-
-  const dispatch = useDispatch();
 
   const onInputChange = ({ target: { name, value } }) => {
     switch (name) {
@@ -56,22 +56,30 @@ export default function TemplateForm({ type }) {
     }
   };
 
+  const isRegisterAllow = () => {
+    if (
+      !!isPasswordError ||
+      !!isEmailError ||
+      !!isNameError ||
+      email.length === 0 ||
+      password.length === 0 ||
+      name.length === 0
+    )
+      return true;
+  };
+
+  const isLoginAllow = () => {
+    if (!!isPasswordError || !!isEmailError || email.length === 0 || password.length === 0) return true;
+  };
+
   const isButtonDisabled = () => {
     switch (type) {
       case 'register':
-        if (
-          !!isPasswordError ||
-          !!isEmailError ||
-          !!isNameError ||
-          email.length === 0 ||
-          password.length === 0 ||
-          name.length === 0
-        )
-          return true;
+        isRegisterAllow();
         break;
 
       case 'login':
-        if (!!isPasswordError || !!isEmailError || email.length === 0 || password.length === 0) return true;
+        isLoginAllow();
         break;
 
       default:
@@ -92,7 +100,7 @@ export default function TemplateForm({ type }) {
             variant="outlined"
             type="text"
             name="name"
-            helperText="Name should contains letters, `, - and whitespaces. For example, Adrian, Jacob Mercer etc"
+            helperText={helperText.regName}
             placeholder="John Smith"
             required
             value={name}
@@ -106,7 +114,7 @@ export default function TemplateForm({ type }) {
           variant="outlined"
           type="email"
           name="email"
-          helperText="Email should contains Latin letters, one @-symbol, one or more dot"
+          helperText={helperText.email}
           placeholder="john_smith@mail.com"
           required
           value={email}
@@ -120,7 +128,7 @@ export default function TemplateForm({ type }) {
           type="password"
           name="password"
           placeholder="Qwerty123!"
-          helperText="Password should contains 8-12 symbols, 'a-z' 'A-Z' '0-9' '!@#$%^&*_=+-'"
+          helperText={helperText.password}
           required
           value={password}
           error={isPasswordError}

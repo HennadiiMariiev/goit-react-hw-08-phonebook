@@ -5,7 +5,8 @@ export const isAllowedKeyCode = (key) => {
     if (
       key.nativeEvent.data === allowSymbols[i] ||
       key.nativeEvent.inputType === 'deleteContentBackward' ||
-      key.nativeEvent.inputType === 'deleteContentForward'
+      key.nativeEvent.inputType === 'deleteContentForward' ||
+      key.type === 'change'
     ) {
       return true;
     }

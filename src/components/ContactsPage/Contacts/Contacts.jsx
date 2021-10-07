@@ -3,14 +3,16 @@ import Divider from '@mui/material/Divider';
 import { fetchRemoveAllContacts } from 'redux/items/items-operations';
 import { useSelector, useDispatch } from 'react-redux';
 import { getFilteredContacts, getState } from 'redux/contacts-selectors';
-import { Button } from '@mui/material';
+import List from '@mui/material/List';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { LoadingButton } from '@mui/lab';
 import { Typography } from '@mui/material';
-
+import { useCurrentButton } from 'hooks/useCurrentButton';
 import styles from 'components/ContactsPage/contactPage.module.scss';
 
 export const Contacts = () => {
   const state = useSelector(getState);
+  const [isCurrentButton, setIsCurrentButton] = useCurrentButton();
   const dispatch = useDispatch();
 
   const makeContactsList = getFilteredContacts(state).map(({ name, number, id }) => {
@@ -29,16 +31,20 @@ export const Contacts = () => {
           <Typography variant="h4" component="h4" className={styles.title}>
             Contacts
           </Typography>
-          <ul className={styles.list}>{makeContactsList}</ul>
+          <List className={styles.list}>{makeContactsList}</List>
 
-          <Button
+          <LoadingButton
             variant="contained"
+            loading={isCurrentButton}
+            onClick={() => {
+              setIsCurrentButton(true);
+              dispatch(fetchRemoveAllContacts());
+            }}
             className={styles.button}
             startIcon={<DeleteIcon className={styles.icon} />}
-            onClick={() => dispatch(fetchRemoveAllContacts())}
           >
             Delete all
-          </Button>
+          </LoadingButton>
         </div>
       )}
     </div>
