@@ -51,7 +51,7 @@ export const fetchCurrentUser = createAsyncThunk('auth/currentUser', async (_, t
   try {
     const { data } = await axios.get('/users/current');
 
-    return data;
+    return { data, avatar: persistedAvatar };
   } catch (error) {
     console.log('error', `${error}`);
     throw new Error(error);

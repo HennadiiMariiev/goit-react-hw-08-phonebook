@@ -24,6 +24,7 @@ const userSlice = createSlice({
 
     [fetchCurrentUser.pending](state, _) {
       state.isFetching = true;
+      state.isLoggedIn = false;
     },
 
     [logoutUser.pending](state, _) {
@@ -45,8 +46,8 @@ const userSlice = createSlice({
     },
 
     [fetchCurrentUser.fulfilled](state, action) {
-      state.user = action.payload;
-      // state.avatar =
+      state.user = action.payload.data;
+      state.avatar = action.payload.avatar;
       state.isLoggedIn = true;
       state.isFetching = false;
     },
@@ -67,11 +68,6 @@ const userSlice = createSlice({
     },
 
     [loginUser.rejected](state, _) {
-      state.isLoggedIn = false;
-      state.isFetching = false;
-    },
-
-    [fetchCurrentUser.pending](state, _) {
       state.isLoggedIn = false;
       state.isFetching = false;
     },
