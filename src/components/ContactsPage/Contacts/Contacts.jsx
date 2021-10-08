@@ -6,12 +6,14 @@ import { getFilteredContacts, getState } from 'redux/contacts-selectors';
 import List from '@mui/material/List';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { LoadingButton } from '@mui/lab';
-import { Typography } from '@mui/material';
+import { Typography, Box, CircularProgress } from '@mui/material';
 import { useCurrentButton } from 'hooks/useCurrentButton';
 import styles from 'components/ContactsPage/contactPage.module.scss';
+import { getIsLoading } from 'redux/loading/loading-selector';
 
 export const Contacts = () => {
   const state = useSelector(getState);
+  const isLoading = useSelector(getIsLoading);
   const [isCurrentButton, setIsCurrentButton] = useCurrentButton();
   const dispatch = useDispatch();
 
@@ -23,9 +25,17 @@ export const Contacts = () => {
     <div className={styles.contacts}>
       <Divider variant="middle" />
       {makeContactsList.length === 0 ? (
-        <Typography variant="h4" component="h4" className={styles.noContacts}>
-          No contacts...
-        </Typography>
+        <>
+          {isLoading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <Typography variant="h4" component="h4" className={styles.noContacts}>
+              'No contacts...'
+            </Typography>
+          )}
+        </>
       ) : (
         <div className={styles.wrapper}>
           <Typography variant="h4" component="h4" className={styles.title}>

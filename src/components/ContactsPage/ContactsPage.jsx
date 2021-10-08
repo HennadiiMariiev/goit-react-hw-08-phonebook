@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { Contacts } from 'components/ContactsPage/Contacts/Contacts';
-import { Filter } from 'components/Filter/Filter';
-import { ContactForm } from 'components/ContactForm/ContactForm';
+import { Filter } from 'components/ContactsPage/Filter/Filter';
+import { ContactForm } from 'components/ContactsPage/ContactForm/ContactForm';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { contactsOperations } from 'redux/items';

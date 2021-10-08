@@ -1,0 +1,25 @@
+.wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 250px!important;
+}
+
+.text {
+    margin-left: 0.5rem;
+    font-size: 1.25rem!important;
+}
+
+.list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap!important;
+    width: 500px;
+    padding-top: 0!important;
+}
+
+.title {
+    text-align: center;
+    font-size: 2rem!important;
+    color:  #1976d2;
+}

@@ -6,7 +6,7 @@ export const isAllowedKeyCode = (key) => {
       key.nativeEvent.data === allowSymbols[i] ||
       key.nativeEvent.inputType === 'deleteContentBackward' ||
       key.nativeEvent.inputType === 'deleteContentForward' ||
-      key.type === 'change'
+      key.nativeEvent.toString() === '[object Event]'
     ) {
       return true;
     }

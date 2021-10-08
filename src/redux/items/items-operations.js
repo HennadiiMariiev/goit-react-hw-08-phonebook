@@ -47,7 +47,6 @@ export const fetchRemoveSingleContact = createAsyncThunk('items/fetchRemoveSingl
     await contactsAPI.removeSingleContact(id);
 
     toastMessage('info', `Contact "${name}" was deleted!`);
-    console.log('id', id);
     return id;
   } catch (err) {
     toastMessage('error', `${err}`);

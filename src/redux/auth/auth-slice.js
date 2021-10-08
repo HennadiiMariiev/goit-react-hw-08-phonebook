@@ -4,6 +4,7 @@ import { registerUser, loginUser, logoutUser, fetchCurrentUser } from 'redux/aut
 const initialState = {
   user: { name: null, email: null },
   token: null,
+  avatar: null,
   isLoggedIn: false,
   isFetching: false,
   error: null,
@@ -45,6 +46,7 @@ const userSlice = createSlice({
 
     [fetchCurrentUser.fulfilled](state, action) {
       state.user = action.payload;
+      // state.avatar =
       state.isLoggedIn = true;
       state.isFetching = false;
     },

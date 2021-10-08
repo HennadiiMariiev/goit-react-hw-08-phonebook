@@ -1,0 +1,56 @@
+.wrapper {
+    color: #FFFFFF;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.navbar {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center;
+}
+
+.navlink {
+    margin-right: 2rem;
+    text-decoration: none;
+}
+
+.active {
+    color: #FFFFFF!important;
+    text-decoration: underline;
+}
+
+.link {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center;
+    color: #FFFFFF!important;
+
+    & .icon {
+        margin-right: 0.5rem;
+    }
+}
+
+.subtitle {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.welcome,
+.userAvatar {
+    margin-right: 0.25rem!important;
+}
+
+.welcome {
+    font-size: 1.25rem;
+    display: inline-block!important;
+}
+
+.guest {
+    display: inline-block;
+    color: #FFFFFF;
+}

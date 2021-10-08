@@ -9,9 +9,8 @@ export const useContactInput = (initial, pattern, deps = null) => {
   }, [deps]);
 
   useEffect(() => {
-    if (pattern.test(value) || value.length === 0) {
-      setIsError(false);
-    } else setIsError(true);
+    if (pattern.test(value) || value.length === 0) setIsError(false);
+    else setIsError(true);
   }, [value, pattern]);
 
   return [value, setValue, isError];
