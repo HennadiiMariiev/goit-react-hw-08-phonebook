@@ -19,13 +19,23 @@ const stringToColor = (string) => {
   return color;
 };
 
-const stringAvatar = (name) => ({
-  sx: {
-    bgcolor: stringToColor(name),
-  },
-  children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
-});
+const stringAvatar = (name) => {
+  let initials = 'US';
 
-export function UserAvatar({ name, src = '', size = 35 }) {
+  if (name.split(' ').length === 1) {
+    initials = name.slice(0, 2);
+  } else if (name.split(' ').length === 2) {
+    initials = name.split(' ')[0][0] + name.split(' ')[1][0];
+  }
+
+  return {
+    sx: {
+      bgcolor: stringToColor(name),
+    },
+    children: initials.toUpperCase(),
+  };
+};
+
+export function UserAvatar({ name = '', src = '', size = 35 }) {
   return <Avatar {...stringAvatar(name)} sx={{ width: size, height: size }} src={src} />;
 }

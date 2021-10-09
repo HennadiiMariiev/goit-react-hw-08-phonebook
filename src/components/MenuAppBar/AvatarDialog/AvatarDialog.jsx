@@ -1,8 +1,7 @@
-import { Typography } from '@mui/material';
 import { avatarDescription } from 'helpers/avatarDescription';
 import React from 'react';
 import { UserAvatar } from '../UserAvatar/UserAvatar';
-import { ListItem, List, ListItemButton, ListItemText, Divider, Dialog, DialogTitle } from '@mui/material';
+import { ListItem, List, ListItemButton, ListItemText, Dialog, DialogTitle } from '@mui/material';
 import { avatarImages } from 'helpers/imagesImportFunction';
 import styles from './avatarDialog.module.scss';
 

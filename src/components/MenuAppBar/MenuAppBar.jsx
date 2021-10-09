@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Typography, IconButton, Tooltip, Toolbar, AppBar, Box, Menu, MenuItem, Link } from '@mui/material';
+import { Typography, IconButton, Tooltip, Toolbar, AppBar, Box, Menu, MenuItem } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import HomeIcon from '@mui/icons-material/Home';
@@ -8,26 +8,30 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import LoginIcon from '@mui/icons-material/Login';
 import ImportContactsIcon from '@mui/icons-material/ImportContacts';
 import { useSelector, useDispatch } from 'react-redux';
-import { getIsLoggedIn, getEmail, getName } from 'redux/auth/auth-selectors';
-import { logoutUser } from 'redux/auth/auth-operations';
+import { getIsLoggedIn, getEmail, getName, getAvatar } from 'redux/auth/auth-selectors';
+import { logoutUser, selectAvatar } from 'redux/auth/auth-operations';
 import { NavBarLink } from './NavBarLink/NavBarLink';
 import { UserAvatar } from './UserAvatar/UserAvatar';
+import { AvatarDialog } from './AvatarDialog/AvatarDialog';
 
 import styles from './menuAppBar.module.scss';
-import { AvatarDialog } from './AvatarDialog/AvatarDialog';
 
 export default function MenuAppBar() {
   const dispatch = useDispatch();
+  const persistedAvatar = useSelector(getAvatar);
 
   const isLoggedIn = useSelector(getIsLoggedIn);
   const email = useSelector(getEmail);
   const name = useSelector(getName);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [userAvatar, setUserAvatar] = useState(null);
+  const [userAvatar, setUserAvatar] = useState(persistedAvatar);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  useEffect(() => {}, [userAvatar]);
+  useEffect(() => {
+    console.log('userAvatar: ', userAvatar);
+    if (userAvatar) dispatch(selectAvatar(userAvatar));
+  }, [userAvatar, dispatch]);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -57,7 +61,7 @@ export default function MenuAppBar() {
                     color="inherit"
                     className={styles.userAvatar}
                   >
-                    <UserAvatar name={name} src={userAvatar} />
+                    <UserAvatar name={name ? name : 'user'} src={userAvatar} />
                   </IconButton>
                 </Tooltip>
 
@@ -125,7 +129,7 @@ export default function MenuAppBar() {
         <AvatarDialog
           open={isDialogOpen}
           onClose={(value) => {
-            setUserAvatar(value);
+            if (typeof value === 'string') setUserAvatar(value);
             setIsDialogOpen(false);
           }}
           handleListItemClick={() => {}}

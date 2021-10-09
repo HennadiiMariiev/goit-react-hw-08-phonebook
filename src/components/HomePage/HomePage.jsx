@@ -26,15 +26,17 @@ export default function HomePage() {
       <Typography variant="h5" component="h5" className={styles.subtitle}>
         Here is a small screencast-video about this App!
       </Typography>
-      <iframe
-        width="960"
-        height="715"
-        src="https://www.youtube.com/embed/QAhIhUKgfZg"
-        title="YouTube video player"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      ></iframe>
+      <div className={styles.videoBox}>
+        <iframe
+          width="960"
+          height="715"
+          src="https://www.youtube.com/embed/QAhIhUKgfZg"
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { registerUser, loginUser, logoutUser, fetchCurrentUser } from 'redux/auth/auth-operations';
+import { registerUser, loginUser, logoutUser, fetchCurrentUser, selectAvatar } from 'redux/auth/auth-operations';
 
 const initialState = {
   user: { name: null, email: null },
@@ -34,6 +34,7 @@ const userSlice = createSlice({
     [registerUser.fulfilled](state, action) {
       state.user = action.payload.user;
       state.token = action.payload.token;
+      state.avatar = null;
       state.isLoggedIn = true;
       state.isFetching = false;
     },
@@ -55,6 +56,7 @@ const userSlice = createSlice({
     [logoutUser.fulfilled](state, _) {
       state.user = { name: null, email: null };
       state.token = null;
+      state.avatar = null;
       state.isLoggedIn = false;
       state.isFetching = false;
     },
@@ -74,6 +76,15 @@ const userSlice = createSlice({
 
     [logoutUser.rejected](state, _) {
       state.isFetching = false;
+    },
+
+    [fetchCurrentUser.rejected](state, _) {
+      state.isFetching = false;
+      state.isLoggedIn = false;
+    },
+
+    [selectAvatar.fulfilled](state, action) {
+      state.avatar = action.payload;
     },
   },
 });

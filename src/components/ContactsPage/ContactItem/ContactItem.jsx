@@ -18,7 +18,6 @@ import { CustomizedCircularProgress } from './CustomizedCircularProgress';
 import { isIdInContacts } from 'helpers/isNameInContacts';
 import { getItems } from 'redux/contacts-selectors';
 import { toastMessage } from 'helpers/form-helper';
-import Fab from '@mui/material/Fab';
 
 import styles from 'components/ContactsPage/contactPage.module.scss';
 
@@ -34,7 +33,7 @@ export default function ContactItem({ id, name, number }) {
   useEffect(() => {
     if (nameValue !== name || numberValue !== number) setIsValuesChanged(true);
     else setIsValuesChanged(false);
-  }, [nameValue, numberValue]);
+  }, [nameValue, numberValue, name, number]);
 
   useEffect(() => {
     if (!isLoading) setIsValuesChanged(false);

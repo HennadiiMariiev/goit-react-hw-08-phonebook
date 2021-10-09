@@ -42,8 +42,6 @@ export const fetchCurrentUser = createAsyncThunk('auth/currentUser', async (_, t
     auth: { token: persistedToken, avatar: persistedAvatar },
   } = thunkAPI.getState();
 
-  console.log('persistedAvatar ', persistedAvatar);
-
   if (persistedToken === null) return thunkAPI.rejectWithValue();
 
   token.set(persistedToken);
@@ -68,4 +66,8 @@ export const logoutUser = createAsyncThunk('auth/logoutUser', async (name) => {
     toastMessage('error', `${error}`);
     throw new Error(error);
   }
+});
+
+export const selectAvatar = createAsyncThunk('auth/selectAvatar', async (avatar) => {
+  return avatar;
 });

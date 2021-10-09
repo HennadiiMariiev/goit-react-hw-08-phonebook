@@ -32,7 +32,7 @@ export const Contacts = () => {
             </Box>
           ) : (
             <Typography variant="h4" component="h4" className={styles.noContacts}>
-              'No contacts...'
+              No contacts...
             </Typography>
           )}
         </>
