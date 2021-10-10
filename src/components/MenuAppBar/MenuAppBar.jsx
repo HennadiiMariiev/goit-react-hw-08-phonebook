@@ -1,45 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Typography, IconButton, Tooltip, Toolbar, AppBar, Box, Menu, MenuItem } from '@mui/material';
+import { Typography, IconButton, Toolbar, AppBar, Box } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import LogoutIcon from '@mui/icons-material/Logout';
 import HomeIcon from '@mui/icons-material/Home';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import LoginIcon from '@mui/icons-material/Login';
 import ImportContactsIcon from '@mui/icons-material/ImportContacts';
 import { useSelector, useDispatch } from 'react-redux';
-import { getIsLoggedIn, getEmail, getName, getAvatar } from 'redux/auth/auth-selectors';
-import { logoutUser, selectAvatar } from 'redux/auth/auth-operations';
+import { getIsLoggedIn } from 'redux/auth/auth-selectors';
+import { selectAvatar } from 'redux/auth/auth-operations';
 import { NavBarLink } from './NavBarLink/NavBarLink';
-import { UserAvatar } from './UserAvatar/UserAvatar';
 import { AvatarDialog } from './AvatarDialog/AvatarDialog';
+import { UserMenu } from 'components/MenuAppBar/UserMenu/UserMenu';
 
 import styles from './menuAppBar.module.scss';
 
 export default function MenuAppBar() {
   const dispatch = useDispatch();
-  const persistedAvatar = useSelector(getAvatar);
 
   const isLoggedIn = useSelector(getIsLoggedIn);
-  const email = useSelector(getEmail);
-  const name = useSelector(getName);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [userAvatar, setUserAvatar] = useState(persistedAvatar);
   const [anchorEl, setAnchorEl] = useState(null);
-
-  useEffect(() => {
-    console.log('userAvatar: ', userAvatar);
-    if (userAvatar) dispatch(selectAvatar(userAvatar));
-  }, [userAvatar, dispatch]);
-
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -51,53 +33,12 @@ export default function MenuAppBar() {
                 <NavBarLink to="/" title="Home" icon={<HomeIcon className={styles.icon} />} />
                 <NavBarLink to="contacts" title="Contacts" icon={<ImportContactsIcon className={styles.icon} />} />
               </div>
-              <div className={styles.navbar}>
-                <Tooltip title="User menu" arrow>
-                  <IconButton
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleMenu}
-                    color="inherit"
-                    className={styles.userAvatar}
-                  >
-                    <UserAvatar name={name ? name : 'user'} src={userAvatar} />
-                  </IconButton>
-                </Tooltip>
-
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                  }}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                >
-                  <MenuItem onClick={() => setIsDialogOpen(!isDialogOpen)}>Select Avatar</MenuItem>
-                  <MenuItem onClick={() => dispatch(logoutUser(name))}>Log out</MenuItem>
-                </Menu>
-                <Typography variant="p" className={styles.welcome}>
-                  {email}
-                </Typography>
-                <Tooltip title="Log Out" arrow>
-                  <IconButton
-                    size="large"
-                    aria-label="Log Out"
-                    aria-controls="logout"
-                    aria-haspopup="true"
-                    onClick={() => dispatch(logoutUser(name))}
-                    color="inherit"
-                  >
-                    <LogoutIcon />
-                  </IconButton>
-                </Tooltip>
-              </div>
+              <UserMenu
+                isDialogOpen={isDialogOpen}
+                setIsDialogOpen={setIsDialogOpen}
+                anchorEl={anchorEl}
+                setAnchorEl={setAnchorEl}
+              />
             </>
           ) : (
             <>
@@ -111,7 +52,7 @@ export default function MenuAppBar() {
                   aria-label="account of current user"
                   aria-controls="menu-appbar"
                   aria-haspopup="true"
-                  onClick={handleMenu}
+                  onClick={(event) => setAnchorEl(event.currentTarget)}
                   color="inherit"
                 >
                   <AccountCircle fontSize="large" />
@@ -129,10 +70,9 @@ export default function MenuAppBar() {
         <AvatarDialog
           open={isDialogOpen}
           onClose={(value) => {
-            if (typeof value === 'string') setUserAvatar(value);
+            if (typeof value === 'string') dispatch(selectAvatar(value));
             setIsDialogOpen(false);
           }}
-          handleListItemClick={() => {}}
         />
       </AppBar>
     </Box>

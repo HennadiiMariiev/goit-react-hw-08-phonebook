@@ -36,6 +36,6 @@ const stringAvatar = (name) => {
   };
 };
 
-export function UserAvatar({ name = '', src = '', size = 35 }) {
+export function UserAvatar({ name = 'user', src = '', size = 35 }) {
   return <Avatar {...stringAvatar(name)} sx={{ width: size, height: size }} src={src} />;
 }

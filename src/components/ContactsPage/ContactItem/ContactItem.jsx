@@ -25,6 +25,7 @@ export default function ContactItem({ id, name, number }) {
   const [nameValue, setNameValue, isNameError] = useContactInput('', regexp.name, name);
   const [numberValue, setNumberValue] = useContactInput('', regexp.number, number);
   const [isValuesChanged, setIsValuesChanged] = useState(false);
+  const [isSaveButtonDisabled, seIsSaveButtonDisabled] = useState(true);
 
   const dispatch = useDispatch();
   const isLoading = useSelector(getIsLoading);
@@ -38,6 +39,13 @@ export default function ContactItem({ id, name, number }) {
   useEffect(() => {
     if (!isLoading) setIsValuesChanged(false);
   }, [isLoading]);
+
+  useEffect(() => {
+    if (isNameError || nameValue.length === 0 || !isValidPhoneLength(numberValue)) seIsSaveButtonDisabled(true);
+    else seIsSaveButtonDisabled(false);
+
+    if (isIdInContacts(contacts, nameValue, id)) seIsSaveButtonDisabled(true);
+  }, [isNameError, nameValue, numberValue, contacts, id]);
 
   const onInputChange = (event) => {
     switch (event.target.name) {
@@ -67,11 +75,6 @@ export default function ContactItem({ id, name, number }) {
     }
 
     dispatch(fetchPatchSingleContact({ id, name: nameValue, number: numberValue }));
-  };
-
-  const isSaveButtonDisabled = () => {
-    if (isNameError || !isValidPhoneLength(numberValue)) return true;
-    return false;
   };
 
   return (
@@ -107,7 +110,7 @@ export default function ContactItem({ id, name, number }) {
           title="Save contact"
           icon={<SaveIcon />}
           onClick={onSaveContact}
-          disabled={isSaveButtonDisabled() || !isValuesChanged}
+          disabled={isSaveButtonDisabled || !isValuesChanged}
           progress={isValuesChanged && <CustomizedCircularProgress />}
         />
 
