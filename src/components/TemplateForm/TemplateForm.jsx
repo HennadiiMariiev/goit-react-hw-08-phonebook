@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { registerUser, loginUser } from 'redux/auth/auth-operations';
 import { LoadingButton } from '@mui/lab';
@@ -19,6 +19,40 @@ export default function TemplateForm({ type }) {
   const [email, setEmail, isEmailError] = useContactInput('', regexp.email);
   const [name, setName, isNameError] = useContactInput('', regexp.name);
   const [password, setPassword, isPasswordError] = useContactInput('', regexp.password);
+  const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState(true);
+
+  useEffect(() => {
+    const isRegisterAllow = () => {
+      if (
+        !!isPasswordError ||
+        !!isEmailError ||
+        !!isNameError ||
+        email.length === 0 ||
+        password.length === 0 ||
+        name.length === 0
+      )
+        return true;
+      return false;
+    };
+
+    const isLoginAllow = () => {
+      if (!!isPasswordError || !!isEmailError || email.length === 0 || password.length === 0) return true;
+      return false;
+    };
+
+    switch (type) {
+      case 'register':
+        setIsSubmitBtnDisabled(isRegisterAllow());
+        break;
+
+      case 'login':
+        setIsSubmitBtnDisabled(isLoginAllow());
+        break;
+
+      default:
+        return;
+    }
+  }, [isPasswordError, isEmailError, isNameError, name, email, password, type]);
 
   const onInputChange = ({ target: { name, value } }) => {
     switch (name) {
@@ -54,38 +88,6 @@ export default function TemplateForm({ type }) {
       default:
         return;
     }
-  };
-
-  const isRegisterAllow = () => {
-    if (
-      !!isPasswordError ||
-      !!isEmailError ||
-      !!isNameError ||
-      email.length === 0 ||
-      password.length === 0 ||
-      name.length === 0
-    )
-      return true;
-  };
-
-  const isLoginAllow = () => {
-    if (!!isPasswordError || !!isEmailError || email.length === 0 || password.length === 0) return true;
-  };
-
-  const isButtonDisabled = () => {
-    switch (type) {
-      case 'register':
-        isRegisterAllow();
-        break;
-
-      case 'login':
-        isLoginAllow();
-        break;
-
-      default:
-        return;
-    }
-    return false;
   };
 
   return (
@@ -140,7 +142,7 @@ export default function TemplateForm({ type }) {
           type="submit"
           onClick={(e) => onSubmit(e)}
           loading={isFetching}
-          disabled={isButtonDisabled()}
+          disabled={isSubmitBtnDisabled}
           className={styles.loadButton}
         >
           {type === 'register' ? 'Sign up' : 'Sign In'}
