@@ -12,11 +12,13 @@ import { selectAvatar } from 'redux/auth/auth-operations';
 import { NavBarLink } from './NavBarLink/NavBarLink';
 import { AvatarDialog } from './AvatarDialog/AvatarDialog';
 import { UserMenu } from 'components/MenuAppBar/UserMenu/UserMenu';
+import { getIsFetching } from 'redux/auth/auth-selectors';
 
 import styles from './menuAppBar.module.scss';
 
 export default function MenuAppBar() {
   const dispatch = useDispatch();
+  const isFetching = useSelector(getIsFetching);
 
   const isLoggedIn = useSelector(getIsLoggedIn);
 
@@ -27,43 +29,47 @@ export default function MenuAppBar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" className={styles.wrapper}>
         <Toolbar className={styles.wrapper}>
-          {isLoggedIn ? (
+          {!isFetching && (
             <>
-              <div className={styles.navbar}>
-                <NavBarLink to="/" title="Home" icon={<HomeIcon className={styles.icon} />} />
-                <NavBarLink to="contacts" title="Contacts" icon={<ImportContactsIcon className={styles.icon} />} />
-              </div>
-              <UserMenu
-                isDialogOpen={isDialogOpen}
-                setIsDialogOpen={setIsDialogOpen}
-                anchorEl={anchorEl}
-                setAnchorEl={setAnchorEl}
-              />
-            </>
-          ) : (
-            <>
-              <div className={styles.navbar}>
-                <NavBarLink to="/" title="Home" icon={<HomeIcon className={styles.icon} />} />
-                <NavBarLink to="/register" title="Register" icon={<HowToRegIcon className={styles.icon} />} />
-                <NavBarLink to="/login" title="Log In" icon={<LoginIcon className={styles.icon} />} />
-              </div>
-              <div className={styles.navbar}>
-                <IconButton
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={(event) => setAnchorEl(event.currentTarget)}
-                  color="inherit"
-                >
-                  <AccountCircle fontSize="large" />
-                </IconButton>
-                <Typography variant="p" className={styles.welcome}>
-                  Welcome,&nbsp;
-                  <NavLink to="/login" className={styles.guest}>
-                    guest!
-                  </NavLink>
-                </Typography>
-              </div>
+              {isLoggedIn ? (
+                <>
+                  <div className={styles.navbar}>
+                    <NavBarLink to="/" title="Home" icon={<HomeIcon className={styles.icon} />} />
+                    <NavBarLink to="contacts" title="Contacts" icon={<ImportContactsIcon className={styles.icon} />} />
+                  </div>
+                  <UserMenu
+                    isDialogOpen={isDialogOpen}
+                    setIsDialogOpen={setIsDialogOpen}
+                    anchorEl={anchorEl}
+                    setAnchorEl={setAnchorEl}
+                  />
+                </>
+              ) : (
+                <>
+                  <div className={styles.navbar}>
+                    <NavBarLink to="/" title="Home" icon={<HomeIcon className={styles.icon} />} />
+                    <NavBarLink to="/register" title="Register" icon={<HowToRegIcon className={styles.icon} />} />
+                    <NavBarLink to="/login" title="Log In" icon={<LoginIcon className={styles.icon} />} />
+                  </div>
+                  <div className={styles.navbar}>
+                    <IconButton
+                      aria-label="account of current user"
+                      aria-controls="menu-appbar"
+                      aria-haspopup="true"
+                      onClick={(event) => setAnchorEl(event.currentTarget)}
+                      color="inherit"
+                    >
+                      <AccountCircle fontSize="large" />
+                    </IconButton>
+                    <Typography variant="p" className={styles.welcome}>
+                      Welcome,&nbsp;
+                      <NavLink to="/login" className={styles.guest}>
+                        guest!
+                      </NavLink>
+                    </Typography>
+                  </div>
+                </>
+              )}
             </>
           )}
         </Toolbar>

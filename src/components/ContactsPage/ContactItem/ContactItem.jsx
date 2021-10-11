@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useContactInput } from 'hooks/useContactInput';
+import { useContact } from 'hooks/useContact';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import UndoIcon from '@mui/icons-material/Undo';
 import { TextField, ListItem, Divider } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
-import * as regexp from 'helpers/regexpPatterns';
 import * as helperText from 'helpers/helper-text';
 import { fetchRemoveSingleContact, fetchPatchSingleContact } from 'redux/items/items-operations';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
@@ -22,8 +21,7 @@ import { toastMessage } from 'helpers/form-helper';
 import styles from 'components/ContactsPage/contactPage.module.scss';
 
 export default function ContactItem({ id, name, number }) {
-  const [nameValue, setNameValue, isNameError] = useContactInput('', regexp.name, name);
-  const [numberValue, setNumberValue] = useContactInput('', regexp.number, number);
+  const [contact, setContact, error] = useContact({ name, number });
   const [isValuesChanged, setIsValuesChanged] = useState(false);
   const [isSaveButtonDisabled, seIsSaveButtonDisabled] = useState(true);
 
@@ -32,75 +30,68 @@ export default function ContactItem({ id, name, number }) {
   const contacts = useSelector(getItems);
 
   useEffect(() => {
-    if (nameValue !== name || numberValue !== number) setIsValuesChanged(true);
+    if (contact.name !== name || contact.number !== number) setIsValuesChanged(true);
     else setIsValuesChanged(false);
-  }, [nameValue, numberValue, name, number]);
+  }, [contact, name, number]);
 
   useEffect(() => {
     if (!isLoading) setIsValuesChanged(false);
   }, [isLoading]);
 
   useEffect(() => {
-    if (isNameError || nameValue.length === 0 || !isValidPhoneLength(numberValue)) seIsSaveButtonDisabled(true);
+    if (error.name || contact.name.length === 0 || !isValidPhoneLength(contact.number)) seIsSaveButtonDisabled(true);
     else seIsSaveButtonDisabled(false);
 
-    if (isIdInContacts(contacts, nameValue, id)) seIsSaveButtonDisabled(true);
-  }, [isNameError, nameValue, numberValue, contacts, id]);
+    if (isIdInContacts(contacts, contact.name, id)) seIsSaveButtonDisabled(true);
+  }, [error.name, contact, contacts, id]);
 
   const onInputChange = (event) => {
-    switch (event.target.name) {
-      case 'name':
-        setNameValue(event.target.value);
-        break;
+    const name = event.target.name;
+    const value = event.target.value;
 
-      case 'number':
-        if (isAllowedKeyCode(event)) setNumberValue(event.target.value);
-        break;
-
-      default:
-        return;
-    }
+    if (name === 'number') {
+      if (isAllowedKeyCode(event)) setContact((prev) => ({ ...prev, [name]: value }));
+    } else setContact((prev) => ({ ...prev, [name]: value }));
   };
 
   const undoChanges = () => {
-    setNameValue(name);
-    setNumberValue(number);
+    setContact({ name, number });
     setIsValuesChanged(false);
   };
 
   const onSaveContact = () => {
-    if (isIdInContacts(contacts, nameValue, id)) {
-      toastMessage('warn', `There is an existing contact with name "${nameValue}"!`);
+    if (isIdInContacts(contacts, contact.name, id)) {
+      toastMessage('warn', `There is an existing contact with name "${contact.name}"!`);
       return;
     }
 
-    dispatch(fetchPatchSingleContact({ id, name: nameValue, number: numberValue }));
+    dispatch(fetchPatchSingleContact({ id, name: contact.name, number: contact.number }));
   };
 
   return (
     <>
       <ListItem className={styles.item}>
-        <Tooltip title={`Name: ${nameValue} Number: ${numberValue}`} arrow>
+        <Tooltip title={`Name: ${contact.name} Number: ${contact.number}`} arrow>
           <ContactPhoneIcon className={styles.icon} />
         </Tooltip>
         <TextField
           label="Name"
           name="name"
           variant="standard"
-          value={nameValue}
+          value={contact.name}
           onChange={onInputChange}
-          error={isNameError}
-          helperText={isNameError ? helperText.name : ' '}
+          error={error.name}
+          helperText={error.name ? helperText.name : ' '}
           className={styles.input}
         />
         <TextField
           label="Number"
           name="number"
           variant="standard"
-          value={numberValue}
+          value={contact.number}
           onChange={onInputChange}
-          error={!isValidPhoneLength(numberValue)}
-          helperText={!isValidPhoneLength(numberValue) ? helperText.number : ' '}
+          error={!isValidPhoneLength(contact.number)}
+          helperText={!isValidPhoneLength(contact.number) ? helperText.number : ' '}
           className={styles.input}
         />
 

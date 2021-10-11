@@ -12,7 +12,7 @@ import { getIsFetching } from 'redux/auth/auth-selectors';
 import { CircularProgress } from '@mui/material';
 import 'react-toastify/dist/ReactToastify.css';
 
-import styles from './components/App/app.module.scss';
+import styles from './app.module.scss';
 
 const HomePage = lazy(() => import('components/HomePage/HomePage' /* webpackChunkName: "home-page"*/));
 const TemplateForm = lazy(() => import('components/TemplateForm/TemplateForm' /* webpackChunkName: "form-page"*/));
@@ -29,7 +29,6 @@ export default function App() {
   return (
     <div>
       <MenuAppBar />
-
       {!isFetching ? (
         <CustomContainer>
           <Suspense fallback={<CircularProgress className={styles.loader} />}>

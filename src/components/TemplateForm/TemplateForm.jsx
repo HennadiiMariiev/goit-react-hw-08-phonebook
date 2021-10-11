@@ -4,11 +4,11 @@ import { registerUser, loginUser } from 'redux/auth/auth-operations';
 import { LoadingButton } from '@mui/lab';
 import { useSelector } from 'react-redux';
 import { getIsFetching } from 'redux/auth/auth-selectors';
-import { useContactInput } from 'hooks/useContactInput';
 import TextField from '@mui/material/TextField';
-import * as regexp from 'helpers/regexpPatterns';
 import { Typography } from '@mui/material';
 import * as helperText from 'helpers/helper-text';
+
+import { useUser } from 'hooks/useUser';
 
 import styles from '../TemplateForm/templateForm.module.scss';
 
@@ -16,27 +16,17 @@ export default function TemplateForm({ type }) {
   const dispatch = useDispatch();
   const isFetching = useSelector(getIsFetching);
 
-  const [email, setEmail, isEmailError] = useContactInput('', regexp.email);
-  const [name, setName, isNameError] = useContactInput('', regexp.name);
-  const [password, setPassword, isPasswordError] = useContactInput('', regexp.password);
+  const [user, setUser, error] = useUser();
   const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState(true);
 
   useEffect(() => {
     const isRegisterAllow = () => {
-      if (
-        !!isPasswordError ||
-        !!isEmailError ||
-        !!isNameError ||
-        email.length === 0 ||
-        password.length === 0 ||
-        name.length === 0
-      )
-        return true;
+      if (Object.values(error).some((el) => el) || Object.values(user).some((el) => el.length === 0)) return true;
       return false;
     };
 
     const isLoginAllow = () => {
-      if (!!isPasswordError || !!isEmailError || email.length === 0 || password.length === 0) return true;
+      if (error.email || error.password || user.email.length === 0 || user.password.length === 0) return true;
       return false;
     };
 
@@ -52,25 +42,10 @@ export default function TemplateForm({ type }) {
       default:
         return;
     }
-  }, [isPasswordError, isEmailError, isNameError, name, email, password, type]);
+  }, [error, user, type]);
 
   const onInputChange = ({ target: { name, value } }) => {
-    switch (name) {
-      case 'name':
-        setName(value);
-        break;
-
-      case 'email':
-        setEmail(value);
-        break;
-
-      case 'password':
-        setPassword(value);
-        break;
-
-      default:
-        return;
-    }
+    setUser((prev) => ({ ...prev, [name]: value }));
   };
 
   const onSubmit = (e) => {
@@ -78,11 +53,11 @@ export default function TemplateForm({ type }) {
 
     switch (type) {
       case 'register':
-        dispatch(registerUser({ name, email, password }));
+        dispatch(registerUser(user));
         break;
 
       case 'login':
-        dispatch(loginUser({ email, password }));
+        dispatch(loginUser({ email: user.email, password: user.password }));
         break;
 
       default:
@@ -105,8 +80,8 @@ export default function TemplateForm({ type }) {
             helperText={helperText.regName}
             placeholder="John Smith"
             required
-            value={name}
-            error={isNameError}
+            value={user.name}
+            error={error.name && !!user.name.length}
             onChange={onInputChange}
             className={styles.input}
           />
@@ -119,8 +94,8 @@ export default function TemplateForm({ type }) {
           helperText={helperText.email}
           placeholder="john_smith@mail.com"
           required
-          value={email}
-          error={isEmailError}
+          value={user.email}
+          error={error.email && !!user.email.length}
           onChange={onInputChange}
           className={styles.input}
         />
@@ -132,8 +107,8 @@ export default function TemplateForm({ type }) {
           placeholder="Qwerty123!"
           helperText={helperText.password}
           required
-          value={password}
-          error={isPasswordError}
+          value={user.password}
+          error={error.password && !!user.password.length}
           onChange={onInputChange}
           className={styles.input}
         />

@@ -3,15 +3,13 @@ import { toastMessage } from '../../../helpers/form-helper';
 import { useSelector, useDispatch } from 'react-redux';
 import { getItems } from 'redux/contacts-selectors';
 import { fetchPostSingleContact } from 'redux/items/items-operations';
-import { useContactInput } from 'hooks/useContactInput';
+import { useContact } from 'hooks/useContact';
 import AddIcon from '@mui/icons-material/Add';
 import { isNameInContacts } from 'helpers/isNameInContacts';
 import { FormControl, InputLabel, Input, FormHelperText, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import * as regexp from 'helpers/regexpPatterns';
 import * as helperText from 'helpers/helper-text';
 import { isAllowedKeyCode } from 'helpers/checkKeyCode';
-import { isValidPhoneLength } from 'helpers/checkPhoneLength';
 import { useCurrentButton } from 'hooks/useCurrentButton';
 
 import styles from '../../TemplateForm/templateForm.module.scss';
@@ -21,45 +19,37 @@ export function ContactForm() {
   const [isCurrentButton, setIsCurrentButton] = useCurrentButton();
   const dispatch = useDispatch();
 
-  const [name, setName, isNameError] = useContactInput('', regexp.name);
-  const [number, setNumber] = useContactInput('', regexp.number);
+  const [contact, setContact, error] = useContact();
 
   const isSubmitButtonDisabled = () => {
-    if (!name.length || isNameError || !isValidPhoneLength(number)) return true;
+    if (Object.values(error).some((el) => el) || Object.values(contact).some((el) => el.length === 0)) return true;
     return false;
   };
 
   //#region methods
   const onInputChange = (event) => {
-    switch (event.target.name) {
-      case 'name':
-        setName(event.target.value);
-        break;
+    const name = event.target.name;
+    const value = event.target.value;
 
-      case 'number':
-        if (isAllowedKeyCode(event)) setNumber(event.target.value);
-        break;
-
-      default:
-        return;
-    }
+    if (name === 'number') {
+      if (isAllowedKeyCode(event)) setContact((prev) => ({ ...prev, [name]: value }));
+    } else setContact((prev) => ({ ...prev, [name]: value }));
   };
 
   const clearInputs = () => {
-    setName('');
-    setNumber('');
+    setContact({ name: '', number: '' });
   };
 
   const submitNewContact = (event) => {
     event.preventDefault();
 
-    if (isNameInContacts(items, name)) {
-      toastMessage('warn', `There is an existing contact with name "${name}"!`);
+    if (isNameInContacts(items, contact.name)) {
+      toastMessage('warn', `There is an existing contact with name "${contact.name}"!`);
       return;
     }
 
     setIsCurrentButton(true);
-    dispatch(fetchPostSingleContact({ name, number }));
+    dispatch(fetchPostSingleContact(contact));
     clearInputs();
   };
   //#endregion
@@ -76,9 +66,9 @@ export function ContactForm() {
             id="name"
             name="name"
             aria-describedby="contact-name"
-            value={name}
+            value={contact.name}
             onChange={onInputChange}
-            error={Boolean(name.length && isNameError)}
+            error={error.name && !!contact.name.length}
           />
           <FormHelperText id="helper-text">{helperText.name}</FormHelperText>
         </FormControl>
@@ -88,9 +78,9 @@ export function ContactForm() {
             id="number"
             name="number"
             aria-describedby="contact-number"
-            value={number}
+            value={contact.number}
             onChange={onInputChange}
-            error={!!number.length && !isValidPhoneLength(number)}
+            error={error.number && !!contact.number.length}
           />
           <FormHelperText id="helper-text">{helperText.number}</FormHelperText>
         </FormControl>
