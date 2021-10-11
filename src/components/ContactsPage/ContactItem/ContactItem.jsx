@@ -10,7 +10,6 @@ import * as helperText from 'helpers/helper-text';
 import { fetchRemoveSingleContact, fetchPatchSingleContact } from 'redux/items/items-operations';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import { isAllowedKeyCode } from 'helpers/checkKeyCode';
-import { isValidPhoneLength } from 'helpers/checkPhoneLength';
 import { getIsLoading } from 'redux/loading/loading-selector';
 import { ButtonWrapper } from './ButtonWrapper';
 import { CustomizedCircularProgress } from './CustomizedCircularProgress';
@@ -39,11 +38,11 @@ export default function ContactItem({ id, name, number }) {
   }, [isLoading]);
 
   useEffect(() => {
-    if (error.name || contact.name.length === 0 || !isValidPhoneLength(contact.number)) seIsSaveButtonDisabled(true);
+    if (error.name || contact.name.length === 0 || error.number) seIsSaveButtonDisabled(true);
     else seIsSaveButtonDisabled(false);
 
     if (isIdInContacts(contacts, contact.name, id)) seIsSaveButtonDisabled(true);
-  }, [error.name, contact, contacts, id]);
+  }, [error, contact, contacts, id]);
 
   const onInputChange = (event) => {
     const name = event.target.name;
@@ -90,8 +89,8 @@ export default function ContactItem({ id, name, number }) {
           variant="standard"
           value={contact.number}
           onChange={onInputChange}
-          error={!isValidPhoneLength(contact.number)}
-          helperText={!isValidPhoneLength(contact.number) ? helperText.number : ' '}
+          error={error.number}
+          helperText={error.number ? helperText.number : ' '}
           className={styles.input}
         />
 

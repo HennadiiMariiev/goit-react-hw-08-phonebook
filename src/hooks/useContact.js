@@ -6,10 +6,15 @@ export function useContact(deps = null) {
   const [error, setError] = useState({ number: false, name: false });
 
   useEffect(() => {
+    const isValidPhoneLength = (phoneStr) => {
+      const arr = phoneStr.split('').filter((sym) => sym !== '(' && sym !== ')' && sym !== '-' && sym !== '+');
+      return arr.length >= 5 && arr.length <= 12 ? true : false;
+    };
+
     regex.name.test(contact.name)
       ? setError((prev) => ({ ...prev, name: false }))
       : setError((prev) => ({ ...prev, name: true }));
-    regex.number.test(contact.number)
+    regex.number.test(contact.number) && isValidPhoneLength(contact.number)
       ? setError((prev) => ({ ...prev, number: false }))
       : setError((prev) => ({ ...prev, number: true }));
   }, [contact]);
